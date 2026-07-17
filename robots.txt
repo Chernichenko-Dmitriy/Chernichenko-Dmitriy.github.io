@@ -1,0 +1,6 @@
+# Allow all search engine bots to crawl the production resume site
+User-agent: *
+Allow: /
+
+# Point search engine crawlers explicitly to your structural framework map
+Sitemap: https://chernichenkodmitriy.com/sitemap.xml
