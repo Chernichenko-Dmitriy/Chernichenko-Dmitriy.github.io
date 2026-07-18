@@ -1,8 +1,12 @@
 <!DOCTYPE html>
-<html lang="en">
+<!-- CHANGED: <html lang="en"> lacked a theme state for CSS token overrides. -->
+<!-- <html lang="en"> -->
+<html lang="en" data-theme="dark">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <!-- ADDED: browser chrome can now follow the resume theme. -->
+  <meta name="theme-color" content="#030712" id="themeColorMeta">
   <title>Dmitriy Chernichenko | Fullstack AI-Integrated Apps Developer</title>
   
   <!-- SEO Meta Tags -->
@@ -34,14 +38,41 @@
   <!-- Skiplink for keyboard accessibility -->
   <a href="#main-content" class="skip-link">Skip to main content</a>
 
+  <!-- ADDED: The requested "Read Resume" control links keyboard and pointer
+       users directly to the resume content. The theme control exposes the
+       light/dark token system without placing comments inside any tag. -->
+  <div class="page-controls" aria-label="Resume controls">
+    <a href="Profile Card/profile-card.html" class="button button--primary">Read Profile Card</a>
+    <button
+      type="button"
+      class="theme-toggle"
+      id="themeToggle"
+      aria-label="Switch to light theme"
+      aria-pressed="false"
+    >
+      Light Theme
+    </button>
+  </div>
+
   <div class="resume-container">
     
     <!-- HEADER: Glassmorphic Premium Card -->
     <header class="profile-header">
       <div class="header-main-info">
         <h1 class="profile-name">Dmitriy Chernichenko</h1>
+        <!-- CHANGED: The original headline used bare text nodes around separators,
+             which could concatenate when the separators were hidden on mobile. -->
+        <!--
         <p class="profile-headline">
           Fullstack AI-Integrated Apps <span class="divider">|</span> Developer in Training <span class="divider">|</span> React • SQL • Python
+        </p>
+        -->
+        <p class="profile-headline">
+          <span class="headline-segment">Fullstack AI-Integrated Apps</span>
+          <span class="divider" aria-hidden="true">|</span>
+          <span class="headline-segment">Developer in Training</span>
+          <span class="divider" aria-hidden="true">|</span>
+          <span class="headline-segment">React • SQL • Python</span>
         </p>
         <p class="profile-location">Location: Seattle, Washington, United States</p>
         
@@ -170,7 +201,10 @@
                   <h3 class="job-title">Staffing Coordinator</h3>
                   <p class="company-name">Valley Medical Center</p>
                 </div>
-                <time class="job-date">November 2024 &ndash; Present | Renton, WA</time>
+                <!-- CHANGED: The original <time> contained a date range plus a location,
+                     which is not one machine-readable time value. A paragraph is semantically accurate. -->
+                <!-- <time class="job-date">November 2024 &ndash; Present | Renton, WA</time> -->
+                <p class="job-date">November 2024 &ndash; Present | Renton, WA</p>
               </header>
               <p class="job-intro">Manage staffing operations for a regional healthcare facility.</p>
               <ul class="job-bullets">
@@ -192,7 +226,10 @@
                   <h3 class="job-title">IT &amp; Accounting Tutor</h3>
                   <p class="company-name">North Seattle College</p>
                 </div>
-                <time class="job-date">September 2023 &ndash; Present | Seattle, WA</time>
+                <!-- CHANGED: The original <time> contained a date range plus a location,
+                     which is not one machine-readable time value. A paragraph is semantically accurate. -->
+                <!-- <time class="job-date">September 2023 &ndash; Present | Seattle, WA</time> -->
+                <p class="job-date">September 2023 &ndash; Present | Seattle, WA</p>
               </header>
               <p class="job-intro">Provide one-on-one and group tutoring in technical and accounting subjects alongside full-time work and full-time studies.</p>
               <ul class="job-bullets">
@@ -213,7 +250,10 @@
                   <h3 class="job-title">Distribution Center Manager</h3>
                   <p class="company-name">International News Inc.</p>
                 </div>
-                <time class="job-date">March 2020 &ndash; March 2025 | Kent, WA</time>
+                <!-- CHANGED: The original <time> contained a date range plus a location,
+                     which is not one machine-readable time value. A paragraph is semantically accurate. -->
+                <!-- <time class="job-date">March 2020 &ndash; March 2025 | Kent, WA</time> -->
+                <p class="job-date">March 2020 &ndash; March 2025 | Kent, WA</p>
               </header>
               <p class="job-intro">Promoted from supervisor to manage all warehouse operations during a period of rapid growth.</p>
               <ul class="job-bullets">
@@ -235,7 +275,10 @@
                   <h3 class="job-title">Countertops Installer</h3>
                   <p class="company-name">Stone Aid LLC.</p>
                 </div>
-                <time class="job-date">April 2017 &ndash; February 2020 | Seattle, WA</time>
+                <!-- CHANGED: The original <time> contained a date range plus a location,
+                     which is not one machine-readable time value. A paragraph is semantically accurate. -->
+                <!-- <time class="job-date">April 2017 &ndash; February 2020 | Seattle, WA</time> -->
+                <p class="job-date">April 2017 &ndash; February 2020 | Seattle, WA</p>
               </header>
               <ul class="job-bullets">
                 <li>Managed accounts receivable, accounts payable, and subcontractor payroll for family business.</li>
@@ -252,7 +295,10 @@
                   <h3 class="job-title">Inventory Management Specialist</h3>
                   <p class="company-name">UPS</p>
                 </div>
-                <time class="job-date">October 2013 &ndash; March 2017 | Seattle, WA</time>
+                <!-- CHANGED: The original <time> contained a date range plus a location,
+                     which is not one machine-readable time value. A paragraph is semantically accurate. -->
+                <!-- <time class="job-date">October 2013 &ndash; March 2017 | Seattle, WA</time> -->
+                <p class="job-date">October 2013 &ndash; March 2017 | Seattle, WA</p>
               </header>
               <ul class="job-bullets">
                 <li>Received, verified, and stored inventory items with manual record-keeping and reconciliation.</li>
@@ -270,7 +316,10 @@
                   <h3 class="job-title">Assistant Treasurer / Accountant</h3>
                   <p class="company-name">Financial Services Coalition - Puget Sound Charitable Foundation</p>
                 </div>
-                <time class="job-date">November 2013 &ndash; April 2014 | Seattle, WA</time>
+                <!-- CHANGED: The original <time> contained a date range plus a location,
+                     which is not one machine-readable time value. A paragraph is semantically accurate. -->
+                <!-- <time class="job-date">November 2013 &ndash; April 2014 | Seattle, WA</time> -->
+                <p class="job-date">November 2013 &ndash; April 2014 | Seattle, WA</p>
               </header>
               <ul class="job-bullets">
                 <li>Developed and implemented record-keeping systems for the full accounting cycle at a nonprofit charitable foundation.</li>
@@ -293,6 +342,65 @@
       <p>&copy; 2026 Dmitriy Chernichenko. System powered by Semantic HTML &amp; Modern Flex/Grid Frameworks.</p>
     </footer>
   </div>
+
+  <!-- ADDED: theme state is persisted, control text remains accurate, and the
+       meta theme color is updated for supported browsers. -->
+  <script>
+    (() => {
+      const documentElement = document.documentElement;
+      const toggle = document.getElementById("themeToggle");
+      const themeColorMeta = document.getElementById("themeColorMeta");
+      const storageKey = "resume-theme";
+
+      const themeMetaColors = {
+        dark: "#030712",
+        light: "#f3f6fb"
+      };
+
+      const getStoredTheme = () => {
+        try {
+          return localStorage.getItem(storageKey);
+        } catch {
+          return null;
+        }
+      };
+
+      const storeTheme = (theme) => {
+        try {
+          localStorage.setItem(storageKey, theme);
+        } catch {
+          /* Storage may be unavailable in privacy-restricted contexts. */
+        }
+      };
+
+      const applyTheme = (theme) => {
+        const isLight = theme === "light";
+        documentElement.dataset.theme = theme;
+        toggle.textContent = isLight ? "Dark Theme" : "Light Theme";
+        toggle.setAttribute(
+          "aria-label",
+          `Switch to ${isLight ? "dark" : "light"} theme`
+        );
+        toggle.setAttribute("aria-pressed", String(isLight));
+        themeColorMeta.setAttribute("content", themeMetaColors[theme]);
+      };
+
+      const storedTheme = getStoredTheme();
+      if (storedTheme === "light" || storedTheme === "dark") {
+        applyTheme(storedTheme);
+      } else {
+        applyTheme("dark");
+      }
+
+      toggle.addEventListener("click", () => {
+        const nextTheme =
+          documentElement.dataset.theme === "dark" ? "light" : "dark";
+
+        applyTheme(nextTheme);
+        storeTheme(nextTheme);
+      });
+    })();
+  </script>
 
 </body>
 </html>

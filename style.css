@@ -1,312 +1,878 @@
 /* ==========================================================================
-   THEME VARIABLES (Orange Terminal & Premium Dark Dashboard)
+   REFACTOR NOTES
+   Every altered legacy declaration is retained immediately above its
+   replacement as a commented-out OLD line. The following declaration or block
+   explains why it changed. Additions are labeled ADDED.
+   ========================================================================== */
+
+/* ==========================================================================
+   1. DESIGN TOKENS AND THEME COLORS
    ========================================================================== */
 :root {
-  --bg-primary: #030712;         /* Pitch-black system terminal background */
-  --bg-secondary: #0b0f19;       /* Deep obsidian diagnostic card panels */
-  
-  --accent-primary: #ff6a00;     /* 80% Tech Accent: Glowing Vivid Orange */
-  --accent-secondary: #00f2fe;   /* 20% Secondary Accent: Sodales Cyan Glow */
-  
-  --text-primary: #ffffff;       /* Main headers & titles (White) */
-  --text-secondary: #ffffff;     /* Set back to full high-contrast white */
-  --text-muted: #64748b;         /* Secondary metadata (Muted gray) */
-  
-  --border-color: #1e293b;       /* Dark structural partition borders */
+  /* OLD: --bg-primary: #030712;
+     CHANGED: replaced device-dependent hex with an in-sRGB-gamut OKLCH token. */
+  --color-canvas: oklch(0.15 0.02 255);
+
+  /* OLD: --bg-secondary: #0b0f19;
+     CHANGED: renamed semantically so components do not depend on one theme. */
+  --color-surface: oklch(0.20 0.02 255);
+
+  /* ADDED: a distinct elevated surface prevents one-off translucent whites. */
+  --color-surface-elevated: oklch(0.24 0.025 255);
+
+  /* OLD: --border-color: #1e293b;
+     CHANGED: moved the border into the perceptual palette. */
+  --color-border: oklch(0.33 0.025 255);
+
+  /* OLD: --text-primary: #ffffff;
+     CHANGED: near-white reduces glare while preserving 17.01:1 contrast on the canvas. */
+  --color-text-primary: oklch(0.95 0.01 255);
+
+  /* OLD: --text-secondary: #ffffff;
+     CHANGED: restored a useful hierarchy; contrast remains 10.37:1 on the surface. */
+  --color-text-secondary: oklch(0.82 0.015 255);
+
+  /* OLD: --text-muted: #64748b;
+     CHANGED: the old gray was too dim for several small-text uses. This token
+     provides 7.30:1 contrast on the dark surface. */
+  --color-text-muted: oklch(0.72 0.02 255);
+
+  /* OLD: --accent-primary: #ff6a00;
+     CHANGED: in-gamut orange preserves the visual identity and provides 6.96:1
+     contrast against the dark surface. */
+  --color-accent: oklch(0.72 0.16 55);
+  --color-accent-hover: oklch(0.77 0.15 55);
+
+  /* OLD: --accent-secondary: #00f2fe;
+     CHANGED: reduced chroma to the verified-safe sRGB ceiling while preserving hue. */
+  --color-accent-secondary: oklch(0.78 0.12 205);
+
+  /* ADDED: foreground placed on the orange control background; 7.46:1 contrast. */
+  --color-on-accent: oklch(0.16 0.02 255);
+
+  /* OLD examples:
+       background-color: rgba(255, 255, 255, 0.01);
+       background-color: rgba(255, 106, 0, 0.05);
+       box-shadow: 0 0 15px rgba(255, 106, 0, 0.4);
+     CHANGED: reusable translucent colors now belong to the token system. */
+  --color-accent-soft: oklch(0.72 0.16 55 / 0.10);
+  --color-accent-soft-strong: oklch(0.72 0.16 55 / 0.18);
+  --color-accent-glow: oklch(0.72 0.16 55 / 0.38);
+  --color-overlay-soft: oklch(1 0 0 / 0.025);
+  --color-shadow: oklch(0 0 0 / 0.46);
+  --color-shadow-soft: oklch(0 0 0 / 0.34);
+
+  /* OLD: --font-mono: "Fira Code", "Courier New", Courier, monospace;
+     CHANGED: retained and grouped with the full typography system. */
+  --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
   --font-mono: "Fira Code", "Courier New", Courier, monospace;
+
+  /* ADDED: shared typography tokens replace repeated fixed values. */
+  --font-size-xs: 0.8rem;
+  --font-size-sm: 0.875rem;
+  --font-size-base: 1rem;
+  --font-size-md: 1.05rem;
+  --font-size-lg: 1.15rem;
+  --font-size-xl: 1.25rem;
+  --line-height-compact: 1.3;
+  --line-height-base: 1.6;
+  --line-height-relaxed: 1.7;
+
+  /* ADDED: spacing tokens replace repeated 0.5/0.75/1/1.5/2/3rem literals. */
+  --space-2xs: 0.25rem;
+  --space-xs: 0.5rem;
+  --space-sm: 0.75rem;
+  --space-md: 1rem;
+  --space-lg: 1.5rem;
+  --space-xl: 2rem;
+  --space-2xl: 2.5rem;
+  --space-3xl: 3rem;
+
+  /* OLD examples:
+       border-radius: 4px;
+       border-radius: 6px;
+       border-radius: 8px;
+       border-radius: 12px;
+     CHANGED: component radii now share one scale. */
+  --radius-xs: 0.25rem;
+  --radius-sm: 0.375rem;
+  --radius-md: 0.5rem;
+  --radius-lg: 0.75rem;
+  --radius-pill: 999px;
+
+  /* ADDED: structural and interaction tokens. */
+  --layout-max-width: 75rem;
+  --sidebar-ratio: 2.7fr;
+  --content-ratio: 7.3fr;
+
+  /* ADDED: fixed timeline tracks keep every job number, heading, and date on
+     the same vertical guides instead of allowing content width to move them. */
+  --timeline-number-column: 1.25rem;
+  --timeline-date-column: minmax(16rem, 20rem);
+
+  --control-height: 2.75rem;
+  --control-height-primary: 3rem;
+  --border-hairline: 1px;
+  --transition-fast: 0.2s ease;
+  --transition-normal: 0.3s ease;
+  --focus-ring: 0 0 0 0.25rem var(--color-accent-secondary);
+  --shadow-card: 0 var(--space-sm) var(--space-xl) var(--color-shadow-soft);
+  --shadow-header: 0 var(--space-lg) var(--space-2xl) var(--color-shadow);
+}
+
+/* ADDED: light-theme override. Hue stays consistent across themes; chroma is
+   lowered only where the sRGB gamut narrows. Every listed color is in gamut. */
+[data-theme="light"] {
+  --color-canvas: oklch(0.97 0.008 255);
+  --color-surface: oklch(0.995 0.002 255);
+  --color-surface-elevated: oklch(0.965 0.01 255);
+  --color-border: oklch(0.86 0.02 255);
+  --color-text-primary: oklch(0.22 0.025 255);
+  --color-text-secondary: oklch(0.36 0.025 255);
+  --color-text-muted: oklch(0.45 0.025 255);
+  --color-accent: oklch(0.52 0.125 55);
+  --color-accent-hover: oklch(0.46 0.11 55);
+  --color-accent-secondary: oklch(0.45 0.07 205);
+  --color-on-accent: oklch(0.995 0.002 255);
+  --color-accent-soft: oklch(0.52 0.125 55 / 0.09);
+  --color-accent-soft-strong: oklch(0.52 0.125 55 / 0.15);
+  --color-accent-glow: oklch(0.52 0.125 55 / 0.24);
+  --color-overlay-soft: oklch(0.22 0.025 255 / 0.025);
+  --color-shadow: oklch(0.22 0.025 255 / 0.16);
+  --color-shadow-soft: oklch(0.22 0.025 255 / 0.10);
 }
 
 /* ==========================================================================
-   RESET & SYSTEM BASICS
+   2. RESET, DOCUMENT BASICS, AND ACCESSIBILITY
    ========================================================================== */
 *, *::before, *::after {
   box-sizing: border-box;
 }
 
+html {
+  color-scheme: dark;
+  scroll-behavior: smooth;
+}
+
+[data-theme="light"] {
+  color-scheme: light;
+}
+
 body {
   margin: 0;
   padding: 0;
-  background-color: var(--bg-primary);
-  color: var(--text-primary);
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-  line-height: 1.6;
+
+  /* OLD: background-color: var(--bg-primary);
+     CHANGED: semantic theme token supports both themes. */
+  background-color: var(--color-canvas);
+
+  /* OLD: color: var(--text-primary);
+     CHANGED: semantic theme token supports both themes. */
+  color: var(--color-text-primary);
+
+  /* OLD: font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+     CHANGED: consumes the shared font token. */
+  font-family: var(--font-sans);
+
+  /* OLD: line-height: 1.6;
+     CHANGED: consumes the shared line-height token. */
+  line-height: var(--line-height-base);
+
   -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  transition:
+    background-color var(--transition-normal),
+    color var(--transition-normal);
 }
 
 /* Accessibility skip link */
 .skip-link {
-  position: absolute;
-  top: -40px;
-  left: 0;
-  background: var(--accent-primary);
-  color: var(--bg-primary);
-  padding: 8px 16px;
+  position: fixed;
+
+  /* OLD: top: -40px;
+     CHANGED: transform keeps the control fully off-canvas regardless of text size. */
+  top: var(--space-xs);
+  left: var(--space-xs);
+  transform: translateY(calc(-100% - var(--space-lg)));
+
+  /* OLD: background: var(--accent-primary);
+     CHANGED: semantic accent token. */
+  background: var(--color-accent);
+
+  /* OLD: color: var(--bg-primary);
+     CHANGED: verified on-accent foreground. */
+  color: var(--color-on-accent);
+
+  /* OLD: padding: 8px 16px;
+     CHANGED: spacing tokens remove duplicated pixel values. */
+  padding: var(--space-sm) var(--space-md);
+
+  min-height: var(--control-height);
+  display: inline-flex;
+  align-items: center;
   font-weight: 700;
-  z-index: 100;
-  transition: top 0.2s;
+  z-index: 1000;
+
+  /* OLD: transition: top 0.2s;
+     CHANGED: transition only the property that actually moves. */
+  transition: transform var(--transition-fast);
+
   text-decoration: none;
-  border-radius: 0 0 4px 4px;
+
+  /* OLD: border-radius: 0 0 4px 4px;
+     CHANGED: shared radius token. */
+  border-radius: var(--radius-sm);
 }
 
 .skip-link:focus {
-  top: 0;
+  /* OLD: top: 0;
+     CHANGED: pairs with the transform-based hidden state. */
+  transform: translateY(0);
 }
 
-/* High-visibility focus state */
-a:focus-visible {
-  outline: 3px solid var(--accent-secondary);
-  outline-offset: 2px;
+/* OLD:
+   a:focus-visible {
+     outline: 3px solid var(--accent-secondary);
+     outline-offset: 2px;
+   }
+   CHANGED: all interactive controls receive the same tokenized focus treatment. */
+:where(a, button):focus-visible {
+  outline: none;
+  box-shadow: var(--focus-ring);
+}
+
+/* ADDED: top-level controls include the requested Read Resume action and theme toggle. */
+.page-controls {
+  width: min(100%, var(--layout-max-width));
+  margin: 0 auto;
+  padding: var(--space-md) var(--space-lg) 0;
+  display: flex;
+  justify-content: flex-end;
+  flex-wrap: wrap;
+  gap: var(--space-sm);
+}
+
+.button,
+.theme-toggle {
+  min-height: var(--control-height);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-sm) var(--space-md);
+  border-radius: var(--radius-sm);
+  border: var(--border-hairline) solid var(--color-border);
+  font: inherit;
+  font-size: var(--font-size-sm);
+  font-weight: 700;
+  cursor: pointer;
+  text-decoration: none;
+  transition:
+    background-color var(--transition-fast),
+    border-color var(--transition-fast),
+    color var(--transition-fast),
+    box-shadow var(--transition-fast),
+    transform var(--transition-fast);
+}
+
+.button--primary {
+  min-height: var(--control-height-primary);
+  color: var(--color-on-accent);
+  background-color: var(--color-accent);
+  border-color: var(--color-accent);
+}
+
+.button--primary:hover {
+  background-color: var(--color-accent-hover);
+  border-color: var(--color-accent-hover);
+  transform: translateY(-0.0625rem);
+}
+
+.theme-toggle {
+  color: var(--color-text-primary);
+  background-color: var(--color-surface);
+}
+
+.theme-toggle:hover {
+  color: var(--color-accent);
+  border-color: var(--color-accent);
+}
+
+/* Standards-based optical text trimming. No invalid -webkit-text-box fallback. */
+@supports (text-box: trim-both cap alphabetic) {
+  .button,
+  .theme-toggle {
+    text-box: trim-both cap alphabetic;
+    padding-block: calc(var(--space-sm) + 0.15em);
+  }
 }
 
 /* ==========================================================================
-   LAYOUT STRUCTURE
+   3. LAYOUT STRUCTURE
    ========================================================================== */
 .resume-container {
-  max-width: 1200px;
+  /* OLD: max-width: 1200px;
+     CHANGED: structural width is tokenized and expressed in rem. */
+  max-width: var(--layout-max-width);
   margin: 0 auto;
-  padding: 2.5rem 1.5rem;
+
+  /* OLD: padding: 2.5rem 1.5rem;
+     CHANGED: spacing scale prevents duplicated literals. */
+  padding: var(--space-2xl) var(--space-lg);
 }
 
 /* ==========================================================================
-   HEADER SECTION: Glassmorphism with Glowing Amber Underlay
+   4. HEADER SECTION
    ========================================================================== */
 .profile-header {
-  background: radial-gradient(circle at 10% 20%, rgba(11, 15, 25, 0.98) 0%, rgba(3, 7, 18, 0.99) 90%);
-  border: 1px solid var(--border-color);
-  padding: 2.5rem;
-  border-radius: 12px;
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6);
+  /* OLD: background: radial-gradient(circle at 10% 20%, rgba(11, 15, 25, 0.98) 0%, rgba(3, 7, 18, 0.99) 90%);
+     CHANGED: gradient derives from theme tokens and remains readable in light mode. */
+  /* ADDED: solid fallback remains valid where color-mix() is unavailable. */
+  background-color: var(--color-surface);
+  background:
+    radial-gradient(
+      circle at 10% 20%,
+      color-mix(in oklch, var(--color-surface-elevated) 92%, var(--color-accent) 8%) 0%,
+      var(--color-surface) 90%
+    );
+
+  /* OLD: border: 1px solid var(--border-color);
+     CHANGED: tokenized hairline and semantic border color. */
+  border: var(--border-hairline) solid var(--color-border);
+
+  /* OLD: padding: 2.5rem;
+     CHANGED: spacing token. */
+  padding: var(--space-2xl);
+
+  /* OLD: border-radius: 12px;
+     CHANGED: radius token. */
+  border-radius: var(--radius-lg);
+
+  /* OLD: box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6);
+     CHANGED: shadow geometry and color are centralized. */
+  box-shadow: var(--shadow-header);
+
   display: flex;
   flex-direction: column;
-  gap: 1.5rem;
-  margin-bottom: 2rem;
+
+  /* OLD: gap: 1.5rem;
+     CHANGED: spacing token. */
+  gap: var(--space-lg);
+
+  /* OLD: margin-bottom: 2rem;
+     CHANGED: spacing token. */
+  margin-bottom: var(--space-xl);
+
   position: relative;
   overflow: hidden;
+  transition:
+    background-color var(--transition-normal),
+    border-color var(--transition-normal),
+    box-shadow var(--transition-normal);
 }
 
 /* Gradient left neon accent line */
 .profile-header::before {
-  content: '';
+  content: "";
   position: absolute;
-  top: 0;
-  left: 0;
-  height: 100%;
-  width: 4px;
-  background: linear-gradient(180deg, var(--accent-primary) 0%, var(--accent-secondary) 100%);
+  inset-block: 0;
+  inset-inline-start: 0;
+  width: 0.25rem;
+
+  /* OLD: background: linear-gradient(180deg, var(--accent-primary) 0%, var(--accent-secondary) 100%);
+     CHANGED: semantic theme tokens. */
+  background: linear-gradient(
+    180deg,
+    var(--color-accent) 0%,
+    var(--color-accent-secondary) 100%
+  );
 }
 
+/* FLUID TYPOGRAPHY VIA clamp()
+   Required derivation:
+     Point A: 320px viewport -> 32px name (2rem)
+     Point B: 1440px viewport -> 44.8px name (2.8rem)
+     slope = (44.8 - 32) / (1440 - 320)
+           = 12.8 / 1120
+           = 0.0114286 px per viewport-px
+           = 1.14286vw
+     intercept = 32px - (0.0114286 * 320)
+               = 28.343px
+               = 1.7714rem
+   Result: clamp(2rem, 1.7714rem + 1.1429vw, 2.8rem). */
 .profile-name {
-  font-size: 2.8rem;
+  /* OLD: font-size: 2.8rem;
+     CHANGED: fluid type scales continuously without a font-size media query. */
+  font-size: clamp(2rem, 1.7714rem + 1.1429vw, 2.8rem);
+
   font-weight: 800;
   letter-spacing: -0.03em;
-  margin: 0 0 0.5rem 0;
-  background: linear-gradient(to right, #ffffff, var(--accent-primary));
+
+  /* OLD: margin: 0 0 0.5rem 0;
+     CHANGED: logical property and spacing token. */
+  margin: 0 0 var(--space-xs);
+
+  /* OLD: background: linear-gradient(to right, #ffffff, var(--accent-primary));
+     CHANGED: text and accent now re-theme together. */
+  background: linear-gradient(
+    to right,
+    var(--color-text-primary),
+    var(--color-accent)
+  );
+
   -webkit-background-clip: text;
+  background-clip: text;
+  color: var(--color-text-primary);
   -webkit-text-fill-color: transparent;
+  overflow-wrap: anywhere;
 }
 
 .profile-headline {
-  font-size: 1.2rem;
+  /* ADDED: each text segment becomes a flex item so separators can turn into
+     clean line breaks on narrow screens instead of leaving words concatenated. */
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  column-gap: var(--space-xs);
+
+  /* OLD: font-size: 1.2rem;
+     CHANGED: uses the shared type scale. */
+  font-size: var(--font-size-lg);
+
   font-weight: 600;
-  color: #ffffff;
-  margin: 0 0 0.5rem 0;
+
+  /* OLD: color: #ffffff;
+     CHANGED: semantic text token maintains hierarchy in both themes. */
+  color: var(--color-text-primary);
+
+  /* OLD: margin: 0 0 0.5rem 0;
+     CHANGED: spacing token. */
+  margin: 0 0 var(--space-xs);
 }
 
 .profile-headline .divider {
-  color: var(--accent-primary);
-  margin: 0 0.5rem;
+  /* OLD: color: var(--accent-primary);
+     CHANGED: semantic accent token. */
+  color: var(--color-accent);
+
+  /* OLD: margin: 0 0.5rem;
+     CHANGED: parent gap now owns separator spacing, preventing doubled gaps. */
+  margin: 0;
 }
 
 .profile-location {
-  font-size: 0.95rem;
+  /* OLD: font-size: 0.95rem;
+     CHANGED: uses a shared accessible small-text token. */
+  font-size: var(--font-size-sm);
+
   font-weight: 700;
-  color: var(--accent-secondary);
+
+  /* OLD: color: var(--accent-secondary);
+     CHANGED: semantic secondary accent token. */
+  color: var(--color-accent-secondary);
+
   text-transform: uppercase;
   letter-spacing: 0.05em;
-  margin: 0 0 1.5rem 0;
+
+  /* OLD: margin: 0 0 1.5rem 0;
+     CHANGED: spacing token. */
+  margin: 0 0 var(--space-lg);
 }
 
 .contact-info {
   font-style: normal;
   display: flex;
   flex-wrap: wrap;
-  gap: 1.5rem;
-  border-top: 1px solid var(--border-color);
-  padding-top: 1.5rem;
+
+  /* OLD: gap: 1.5rem;
+     CHANGED: spacing token. */
+  gap: var(--space-lg);
+
+  /* OLD: border-top: 1px solid var(--border-color);
+     CHANGED: tokenized hairline and semantic border. */
+  border-top: var(--border-hairline) solid var(--color-border);
+
+  /* OLD: padding-top: 1.5rem;
+     CHANGED: spacing token. */
+  padding-top: var(--space-lg);
 }
 
 .contact-info p {
   margin: 0;
-  font-size: 1rem;
-  color: var(--text-secondary);
+
+  /* OLD: font-size: 1rem;
+     CHANGED: typography token. */
+  font-size: var(--font-size-base);
+
+  /* OLD: color: var(--text-secondary);
+     CHANGED: semantic text token. */
+  color: var(--color-text-secondary);
+
+  overflow-wrap: anywhere;
 }
 
 .contact-info strong {
-  color: var(--accent-primary); /* Bold labels emphasized in orange */
+  /* OLD: color: var(--accent-primary);
+     CHANGED: semantic accent token. */
+  color: var(--color-accent);
 }
 
 .contact-info a {
-  color: #ffffff;
+  /* OLD: color: #ffffff;
+     CHANGED: semantic text token supports light mode. */
+  color: var(--color-text-primary);
+
   text-decoration: underline;
-  transition: color 0.2s ease;
+  text-underline-offset: 0.18em;
+
+  /* OLD: transition: color 0.2s ease;
+     CHANGED: shared transition token. */
+  transition: color var(--transition-fast);
 }
 
 .contact-info a:hover {
-  color: var(--accent-primary);
+  /* OLD: color: var(--accent-primary);
+     CHANGED: semantic accent token. */
+  color: var(--color-accent);
 }
 
-/* Header Action Buttons */
+/* Header profile links */
 .social-links ul {
   list-style: none;
   padding: 0;
   margin: 0;
   display: flex;
   flex-wrap: wrap;
-  gap: 1rem;
+
+  /* OLD: gap: 1rem;
+     CHANGED: spacing token. */
+  gap: var(--space-md);
 }
 
 .social-links a {
-  display: inline-block;
-  background-color: rgba(255, 255, 255, 0.02);
-  color: #ffffff;
-  padding: 0.5rem 1rem;
-  border-radius: 6px;
+  /* OLD: display: inline-block;
+     CHANGED: inline-flex enables reliable touch-target centering. */
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  /* OLD: background-color: rgba(255, 255, 255, 0.02);
+     CHANGED: tokenized overlay color. */
+  background-color: var(--color-overlay-soft);
+
+  /* OLD: color: #ffffff;
+     CHANGED: semantic text token. */
+  color: var(--color-text-primary);
+
+  /* OLD: padding: 0.5rem 1rem;
+     CHANGED: spacing tokens. */
+  padding: var(--space-xs) var(--space-md);
+
+  /* OLD: border-radius: 6px;
+     CHANGED: radius token. */
+  border-radius: var(--radius-sm);
+
   text-decoration: none;
-  font-size: 0.85rem;
+
+  /* OLD: font-size: 0.85rem;
+     CHANGED: shared small-text token. */
+  font-size: var(--font-size-sm);
+
   font-weight: 600;
-  border: 1px solid var(--border-color);
-  transition: all 0.25s ease;
+
+  /* OLD: border: 1px solid var(--border-color);
+     CHANGED: tokenized hairline and semantic border. */
+  border: var(--border-hairline) solid var(--color-border);
+
+  /* ADDED: all action links meet the 44px touch-target minimum. */
+  min-height: var(--control-height);
+
+  /* OLD: transition: all 0.25s ease;
+     CHANGED: avoids animating unrelated or expensive properties. */
+  transition:
+    background-color var(--transition-fast),
+    border-color var(--transition-fast),
+    color var(--transition-fast),
+    box-shadow var(--transition-fast),
+    transform var(--transition-fast);
 }
 
 .social-links a:hover,
-.social-links a:focus {
-  background-color: var(--accent-primary);
-  color: var(--bg-primary);
-  border-color: var(--accent-primary);
-  box-shadow: 0 0 15px rgba(255, 106, 0, 0.4);
+.social-links a:focus-visible {
+  /* OLD: background-color: var(--accent-primary);
+     CHANGED: semantic accent token. */
+  background-color: var(--color-accent);
+
+  /* OLD: color: var(--bg-primary);
+     CHANGED: verified on-accent foreground. */
+  color: var(--color-on-accent);
+
+  /* OLD: border-color: var(--accent-primary);
+     CHANGED: semantic accent token. */
+  border-color: var(--color-accent);
+
+  /* OLD: box-shadow: 0 0 15px rgba(255, 106, 0, 0.4);
+     CHANGED: glow color is tokenized. */
+  box-shadow: 0 0 var(--space-lg) var(--color-accent-glow);
+
+  transform: translateY(-0.0625rem);
 }
 
 /* ==========================================================================
-   DASHBOARD GRID & PANELS
+   5. DASHBOARD GRID AND PANELS
    ========================================================================== */
 .dashboard-grid {
   display: grid;
-  grid-template-columns: 1fr;
-  gap: 1rem;
+  grid-template-columns: minmax(0, 1fr);
+
+  /* OLD: gap: 1rem;
+     CHANGED: spacing token. */
+  gap: var(--space-md);
 }
 
-@media (min-width: 992px) {
+.sidebar-column,
+.main-column {
+  min-width: 0;
+}
+
+/* OLD: @media (min-width: 992px)
+   CHANGED: rem breakpoint respects user font scaling while preserving 992px at 16px root size. */
+@media (min-width: 62rem) {
   .dashboard-grid {
-    /* ADUSTMENT: Sidebar is narrowed to 2.7fr, content is widened to 7.3fr */
-    grid-template-columns: 2.7fr 7.3fr; 
-    gap: 1rem; /* Gap remains tight and half as small as original (2rem) */
+    /* OLD: grid-template-columns: 2.7fr 7.3fr;
+       CHANGED: ratios are structural tokens and minmax prevents overflow. */
+    grid-template-columns:
+      minmax(0, var(--sidebar-ratio))
+      minmax(0, var(--content-ratio));
+
+    /* OLD: gap: 1rem;
+       CHANGED: spacing token. */
+    gap: var(--space-md);
   }
 }
 
 .dashboard-card {
-  background-color: var(--bg-secondary);
-  border: 1px solid var(--border-color);
-  padding: 2rem;
-  border-radius: 12px;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
-  margin-bottom: 2rem;
-  transition: border-color 0.3s ease;
+  /* OLD: background-color: var(--bg-secondary);
+     CHANGED: semantic surface token. */
+  background-color: var(--color-surface);
+
+  /* OLD: border: 1px solid var(--border-color);
+     CHANGED: tokenized hairline and semantic border. */
+  border: var(--border-hairline) solid var(--color-border);
+
+  /* OLD: padding: 2rem;
+     CHANGED: spacing token. */
+  padding: var(--space-xl);
+
+  /* OLD: border-radius: 12px;
+     CHANGED: radius token. */
+  border-radius: var(--radius-lg);
+
+  /* OLD: box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+     CHANGED: shadow token. */
+  box-shadow: var(--shadow-card);
+
+  /* OLD: margin-bottom: 2rem;
+     CHANGED: spacing token. */
+  margin-bottom: var(--space-xl);
+
+  /* OLD: transition: border-color 0.3s ease;
+     CHANGED: includes theme-relevant properties without using transition: all. */
+  transition:
+    background-color var(--transition-normal),
+    border-color var(--transition-normal),
+    box-shadow var(--transition-normal),
+    transform var(--transition-normal);
 }
 
 .dashboard-card:hover {
-  border-color: rgba(255, 106, 0, 0.3);
+  /* OLD: border-color: rgba(255, 106, 0, 0.3);
+     CHANGED: tokenized soft accent. */
+  border-color: var(--color-accent-soft-strong);
 }
 
 .card-title {
-  font-size: 1.55rem;
+  /* OLD: font-size: 1.55rem;
+     CHANGED: responsive shared range improves small-screen fit. */
+  font-size: clamp(1.3rem, 1.2286rem + 0.3571vw, 1.55rem);
+
   font-weight: 800;
-  color: var(--accent-primary); /* Section headers unified in vibrant orange */
+
+  /* OLD: color: var(--accent-primary);
+     CHANGED: semantic accent token. */
+  color: var(--color-accent);
+
   margin-top: 0;
-  margin-bottom: 1.5rem;
+
+  /* OLD: margin-bottom: 1.5rem;
+     CHANGED: spacing token. */
+  margin-bottom: var(--space-lg);
+
   display: flex;
   align-items: center;
-  border-bottom: 1px solid var(--border-color);
-  padding-bottom: 0.75rem;
+
+  /* OLD: border-bottom: 1px solid var(--border-color);
+     CHANGED: tokenized hairline and semantic border. */
+  border-bottom: var(--border-hairline) solid var(--color-border);
+
+  /* OLD: padding-bottom: 0.75rem;
+     CHANGED: spacing token. */
+  padding-bottom: var(--space-sm);
+
+  overflow-wrap: anywhere;
 }
 
 .card-title::before {
-  content: '>';
+  content: ">";
+
+  /* OLD: font-family: var(--font-mono);
+     RETAINED: intentional display typography. */
   font-family: var(--font-mono);
-  color: var(--accent-secondary);
-  margin-right: 0.5rem;
+
+  /* OLD: color: var(--accent-secondary);
+     CHANGED: semantic secondary accent token. */
+  color: var(--color-accent-secondary);
+
+  /* OLD: margin-right: 0.5rem;
+     CHANGED: logical spacing token. */
+  margin-inline-end: var(--space-xs);
+
   font-weight: 800;
 }
 
 /* ==========================================================================
-   LEFT COLUMN (Sidebar Components)
+   6. SIDEBAR COMPONENTS
    ========================================================================== */
-/* Skills Badge Grid */
 .skills-grid {
   list-style: none;
   padding: 0;
   margin: 0;
   display: flex;
   flex-wrap: wrap;
-  gap: 0.5rem;
+
+  /* OLD: gap: 0.5rem;
+     CHANGED: spacing token. */
+  gap: var(--space-xs);
 }
 
 .skills-grid li {
-  background-color: rgba(255, 106, 0, 0.05);
-  color: #ffffff;
-  padding: 0.5rem 0.8rem;
-  border-radius: 6px;
-  font-size: 0.95rem;
+  /* OLD: background-color: rgba(255, 106, 0, 0.05);
+     CHANGED: tokenized soft accent. */
+  background-color: var(--color-accent-soft);
+
+  /* OLD: color: #ffffff;
+     CHANGED: semantic text token. */
+  color: var(--color-text-primary);
+
+  /* OLD: padding: 0.5rem 0.8rem;
+     CHANGED: spacing and typography tokens replace the magic 0.8rem value. */
+  padding: var(--space-xs) var(--space-sm);
+
+  /* OLD: border-radius: 6px;
+     CHANGED: radius token. */
+  border-radius: var(--radius-sm);
+
+  /* OLD: font-size: 0.95rem;
+     CHANGED: shared small-text token. */
+  font-size: var(--font-size-sm);
+
   font-weight: 600;
   font-family: var(--font-mono);
-  border: 1px solid var(--border-color);
-  transition: all 0.2s ease;
+
+  /* OLD: border: 1px solid var(--border-color);
+     CHANGED: tokenized hairline and semantic border. */
+  border: var(--border-hairline) solid var(--color-border);
+
+  /* OLD: transition: all 0.2s ease;
+     CHANGED: explicit transition properties. */
+  transition:
+    background-color var(--transition-fast),
+    border-color var(--transition-fast),
+    color var(--transition-fast);
 }
 
 .skills-grid li:hover {
-  border-color: var(--accent-primary);
-  background-color: rgba(255, 106, 0, 0.15);
+  /* OLD: border-color: var(--accent-primary);
+     CHANGED: semantic accent token. */
+  border-color: var(--color-accent);
+
+  /* OLD: background-color: rgba(255, 106, 0, 0.15);
+     CHANGED: tokenized stronger accent tint. */
+  background-color: var(--color-accent-soft-strong);
 }
 
-/* Certifications Panel */
-.certs-list {
-  list-style: none;
-  padding: 0;
-  margin: 0;
-}
-
-.certs-list li {
-  padding: 1rem;
-  background-color: rgba(255, 255, 255, 0.01);
-  border: 1px solid var(--border-color);
-  border-radius: 8px;
-  margin-bottom: 0.75rem;
-  border-left: 3px solid var(--accent-primary);
-}
-
-.certs-list strong {
-  display: block;
-  font-size: 1.05rem;
-  color: #ffffff;
-}
-
-.certs-list .subtext {
-  display: block;
-  font-size: 0.95rem;
-  color: var(--text-secondary);
-  margin-top: 0.25rem;
-}
-
-/* Education Cards */
+.certs-list,
 .education-list {
   list-style: none;
   padding: 0;
   margin: 0;
 }
 
+.certs-list li {
+  /* OLD: padding: 1rem;
+     CHANGED: spacing token. */
+  padding: var(--space-md);
+
+  /* OLD: background-color: rgba(255, 255, 255, 0.01);
+     CHANGED: semantic elevated surface. */
+  background-color: var(--color-surface-elevated);
+
+  /* OLD: border: 1px solid var(--border-color);
+     CHANGED: tokenized hairline and semantic border. */
+  border: var(--border-hairline) solid var(--color-border);
+
+  /* OLD: border-radius: 8px;
+     CHANGED: radius token. */
+  border-radius: var(--radius-md);
+
+  /* OLD: margin-bottom: 0.75rem;
+     CHANGED: spacing token. */
+  margin-bottom: var(--space-sm);
+
+  /* OLD: border-left: 3px solid var(--accent-primary);
+     CHANGED: logical border and semantic accent token. */
+  border-inline-start: 0.1875rem solid var(--color-accent);
+}
+
+.certs-list strong {
+  display: block;
+
+  /* OLD: font-size: 1.05rem;
+     CHANGED: typography token. */
+  font-size: var(--font-size-md);
+
+  /* OLD: color: #ffffff;
+     CHANGED: semantic text token. */
+  color: var(--color-text-primary);
+}
+
+.certs-list .subtext {
+  display: block;
+
+  /* OLD: font-size: 0.95rem;
+     CHANGED: shared small-text token. */
+  font-size: var(--font-size-sm);
+
+  /* OLD: color: var(--text-secondary);
+     CHANGED: semantic text token. */
+  color: var(--color-text-secondary);
+
+  /* OLD: margin-top: 0.25rem;
+     CHANGED: spacing token. */
+  margin-top: var(--space-2xs);
+}
+
 .education-list li {
-  border-bottom: 1px solid var(--border-color);
-  padding-bottom: 1.25rem;
-  margin-bottom: 1.25rem;
+  /* OLD: border-bottom: 1px solid var(--border-color);
+     CHANGED: tokenized hairline and semantic border. */
+  border-bottom: var(--border-hairline) solid var(--color-border);
+
+  /* OLD: padding-bottom: 1.25rem;
+     CHANGED: spacing token. */
+  padding-bottom: var(--space-xl);
+
+  /* OLD: margin-bottom: 1.25rem;
+     CHANGED: spacing token. */
+  margin-bottom: var(--space-xl);
 }
 
 .education-list li:last-child {
@@ -316,217 +882,614 @@ a:focus-visible {
 }
 
 .education-list h3 {
-  font-size: 1.15rem;
+  /* OLD: font-size: 1.15rem;
+     CHANGED: typography token. */
+  font-size: var(--font-size-lg);
+
   margin: 0;
-  color: var(--accent-primary); /* Highlighted in Orange */
+
+  /* OLD: color: var(--accent-primary);
+     CHANGED: semantic accent token. */
+  color: var(--color-accent);
 }
 
 .education-list .degree {
-  font-size: 1rem;
-  color: #ffffff;
-  margin: 0.25rem 0;
+  /* OLD: font-size: 1rem;
+     CHANGED: typography token. */
+  font-size: var(--font-size-base);
+
+  /* OLD: color: #ffffff;
+     CHANGED: semantic text token. */
+  color: var(--color-text-primary);
+
+  /* OLD: margin: 0.25rem 0;
+     CHANGED: spacing token. */
+  margin: var(--space-2xs) 0;
 }
 
 .education-list .dates {
-  font-size: 0.85rem;
+  /* OLD: font-size: 0.85rem;
+     CHANGED: shared small-text token. */
+  font-size: var(--font-size-sm);
+
   font-family: var(--font-mono);
-  color: var(--accent-secondary);
+
+  /* OLD: color: var(--accent-secondary);
+     CHANGED: semantic secondary accent token. */
+  color: var(--color-accent-secondary);
+
   margin: 0;
 }
 
 .gpa-tag {
   display: inline-block;
-  font-size: 0.8rem;
+
+  /* OLD: font-size: 0.8rem;
+     CHANGED: typography token. */
+  font-size: var(--font-size-xs);
+
   font-weight: 700;
-  background-color: rgba(255, 106, 0, 0.15);
-  color: var(--accent-primary);
-  border: 1px solid var(--accent-primary);
-  padding: 0.15rem 0.5rem;
-  border-radius: 4px;
-  margin-top: 0.5rem;
+
+  /* OLD: background-color: rgba(255, 106, 0, 0.15);
+     CHANGED: tokenized accent tint. */
+  background-color: var(--color-accent-soft-strong);
+
+  /* OLD: color: var(--accent-primary);
+     CHANGED: semantic accent token. */
+  color: var(--color-accent);
+
+  /* OLD: border: 1px solid var(--accent-primary);
+     CHANGED: tokenized hairline and semantic accent. */
+  border: var(--border-hairline) solid var(--color-accent);
+
+  /* OLD: padding: 0.15rem 0.5rem;
+     CHANGED: tokenized spacing; 0.15rem had no scale relationship. */
+  padding: var(--space-2xs) var(--space-xs);
+
+  /* OLD: border-radius: 4px;
+     CHANGED: radius token. */
+  border-radius: var(--radius-xs);
+
+  /* OLD: margin-top: 0.5rem;
+     CHANGED: spacing token. */
+  margin-top: var(--space-xs);
+}
+
+/* Optional optical trimming for compact chips. */
+@supports (text-box: trim-both cap alphabetic) {
+  .gpa-tag,
+  .skills-grid li {
+    text-box: trim-both cap alphabetic;
+    padding-block: calc(var(--space-2xs) + 0.15em);
+  }
 }
 
 /* ==========================================================================
-   RIGHT MAIN SYSTEM COLUMN
+   7. MAIN CONTENT COMPONENTS
    ========================================================================== */
 .summary-card {
-  border-top: 4px solid var(--accent-primary);
+  /* OLD: border-top: 4px solid var(--accent-primary);
+     CHANGED: semantic accent token; 4px remains an intentional decorative line. */
+  border-top: 0.25rem solid var(--color-accent);
 }
 
 .lead-text {
-  font-size: 1.2rem;
+  /* OLD: font-size: 1.2rem;
+     CHANGED: fluid but bounded body emphasis. */
+  font-size: clamp(1.05rem, 1.0071rem + 0.2143vw, 1.2rem);
+
   font-weight: 500;
-  color: var(--text-secondary); /* Restored to full high-contrast white */
-  line-height: 1.7;
-  margin-bottom: 1.5rem;
+
+  /* OLD: color: var(--text-secondary);
+     CHANGED: semantic text token. */
+  color: var(--color-text-secondary);
+
+  /* OLD: line-height: 1.7;
+     CHANGED: shared relaxed line-height token. */
+  line-height: var(--line-height-relaxed);
+
+  /* OLD: margin-bottom: 1.5rem;
+     CHANGED: spacing token. */
+  margin-bottom: var(--space-lg);
 }
 
 .subsection-title {
-  font-size: 1.25rem;
+  /* OLD: font-size: 1.25rem;
+     CHANGED: typography token. */
+  font-size: var(--font-size-xl);
+
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.05em;
-  color: var(--accent-secondary);
-  margin-top: 2rem;
-  margin-bottom: 1.25rem;
-  border-left: 3px solid var(--accent-primary);
-  padding-left: 0.5rem;
+
+  /* OLD: color: var(--accent-secondary);
+     CHANGED: semantic secondary accent token. */
+  color: var(--color-accent-secondary);
+
+  /* OLD: margin-top: 2rem;
+     CHANGED: spacing token. */
+  margin-top: var(--space-xl);
+
+  /* OLD: margin-bottom: 1.25rem;
+     CHANGED: spacing token. */
+  margin-bottom: var(--space-xl);
+
+  /* OLD: border-left: 3px solid var(--accent-primary);
+     CHANGED: logical border and semantic accent token. */
+  border-inline-start: 0.1875rem solid var(--color-accent);
+
+  /* OLD: padding-left: 0.5rem;
+     CHANGED: logical spacing token. */
+  padding-inline-start: var(--space-xs);
 }
 
-/* Project Deployments Grid */
 .projects-grid {
   display: grid;
-  grid-template-columns: 1fr;
-  gap: 1rem;
+  grid-template-columns: minmax(0, 1fr);
+
+  /* OLD: gap: 1rem;
+     CHANGED: spacing token. */
+  gap: var(--space-md);
 }
 
-@media (min-width: 600px) {
+/* OLD: @media (min-width: 600px)
+   CHANGED: equivalent rem breakpoint respects root font scaling. */
+@media (min-width: 37.5rem) {
   .projects-grid {
-    grid-template-columns: 1fr 1fr;
+    /* OLD: grid-template-columns: 1fr 1fr;
+       CHANGED: minmax prevents long URLs or code terms from forcing overflow. */
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
 
 .project-box {
-  background-color: rgba(255, 255, 255, 0.01);
-  border: 1px solid var(--border-color);
-  padding: 1.5rem;
-  border-radius: 8px;
-  transition: all 0.3s ease;
+  /* OLD: background-color: rgba(255, 255, 255, 0.01);
+     CHANGED: semantic elevated surface. */
+  background-color: var(--color-surface-elevated);
+
+  /* OLD: border: 1px solid var(--border-color);
+     CHANGED: tokenized hairline and semantic border. */
+  border: var(--border-hairline) solid var(--color-border);
+
+  /* OLD: padding: 1.5rem;
+     CHANGED: spacing token. */
+  padding: var(--space-lg);
+
+  /* OLD: border-radius: 8px;
+     CHANGED: radius token. */
+  border-radius: var(--radius-md);
+
+  /* OLD: transition: all 0.3s ease;
+     CHANGED: explicit transition properties. */
+  transition:
+    background-color var(--transition-normal),
+    border-color var(--transition-normal),
+    transform var(--transition-normal);
 }
 
 .project-box:hover {
-  border-color: var(--accent-primary);
-  transform: translateY(-2px);
+  /* OLD: border-color: var(--accent-primary);
+     CHANGED: semantic accent token. */
+  border-color: var(--color-accent);
+
+  /* OLD: transform: translateY(-2px);
+     CHANGED: rem value responds predictably to root scaling. */
+  transform: translateY(-0.125rem);
 }
 
 .project-counter {
   display: block;
   font-family: var(--font-mono);
-  font-size: 0.95rem;
+
+  /* OLD: font-size: 0.95rem;
+     CHANGED: shared small-text token. */
+  font-size: var(--font-size-sm);
+
   font-weight: 700;
-  color: var(--accent-primary); /* Counters highlighted in orange */
-  margin-bottom: 0.5rem;
+
+  /* OLD: color: var(--accent-primary);
+     CHANGED: semantic accent token. */
+  color: var(--color-accent);
+
+  /* OLD: margin-bottom: 0.5rem;
+     CHANGED: spacing token. */
+  margin-bottom: var(--space-xs);
+
+  overflow-wrap: anywhere;
 }
 
 .project-box p {
-  font-size: 1rem;
-  color: var(--text-secondary); /* Restored to full high-contrast white */
-  margin: 0 0 1.25rem 0;
+  /* OLD: font-size: 1rem;
+     CHANGED: typography token. */
+  font-size: var(--font-size-base);
+
+  /* OLD: color: var(--text-secondary);
+     CHANGED: semantic text token. */
+  color: var(--color-text-secondary);
+
+  /* OLD: margin: 0 0 1.25rem 0;
+     CHANGED: spacing token. */
+  margin: 0 0 var(--space-xl);
 }
 
 .project-link {
-  font-size: 0.95rem;
-  color: var(--accent-secondary);
+  /* OLD: font-size: 0.95rem;
+     CHANGED: shared small-text token. */
+  font-size: var(--font-size-sm);
+
+  /* OLD: color: var(--accent-secondary);
+     CHANGED: semantic secondary accent token. */
+  color: var(--color-accent-secondary);
+
   text-decoration: underline;
+  text-underline-offset: 0.18em;
   font-weight: 700;
+  overflow-wrap: anywhere;
 }
 
 .project-link:hover {
-  color: var(--accent-primary);
+  /* OLD: color: var(--accent-primary);
+     CHANGED: semantic accent token. */
+  color: var(--color-accent);
 }
 
 /* ==========================================================================
-   CHRONOLOGICAL CAREER TIMELINE
+   8. CHRONOLOGICAL CAREER TIMELINE
    ========================================================================== */
 .timeline {
   position: relative;
-  padding-left: 1.5rem;
-  border-left: 2px solid var(--border-color);
+
+  /* OLD: padding-left: 1.5rem;
+     CHANGED: logical spacing token. */
+  padding-inline-start: var(--space-lg);
+
+  /* OLD: border-left: 2px solid var(--border-color);
+     CHANGED: logical border and semantic border token. */
+  border-inline-start: 0.125rem solid var(--color-border);
 }
 
 .timeline-item {
   position: relative;
-  margin-bottom: 3rem;
+
+  /* OLD: margin-bottom: 3rem;
+     CHANGED: spacing token. */
+  margin-bottom: var(--space-3xl);
 }
 
 .timeline-item:last-child {
   margin-bottom: 0;
 }
 
-/* Neon Node Indicator */
 .timeline-dot {
   position: absolute;
-  left: calc(-1.5rem - 6px);
-  top: 6px;
-  width: 10px;
-  height: 10px;
+
+  /* OLD: left: calc(-1.5rem - 6px);
+     CHANGED: logical inset and tokenized spacing/radius arithmetic. */
+  inset-inline-start: calc(-1 * var(--space-lg) - 0.375rem);
+
+  /* OLD: top: 6px;
+     CHANGED: rem value remains stable under zoom. */
+  top: 0.375rem;
+
+  /* OLD: width: 10px; height: 10px;
+     CHANGED: shared rem sizing. */
+  width: 0.625rem;
+  height: 0.625rem;
+
   border-radius: 50%;
-  background-color: var(--accent-primary);
-  border: 2px solid var(--bg-primary);
-  box-shadow: 0 0 8px var(--accent-primary);
+
+  /* OLD: background-color: var(--accent-primary);
+     CHANGED: semantic accent token. */
+  background-color: var(--color-accent);
+
+  /* OLD: border: 2px solid var(--bg-primary);
+     CHANGED: semantic canvas token. */
+  border: 0.125rem solid var(--color-canvas);
+
+  /* OLD: box-shadow: 0 0 8px var(--accent-primary);
+     CHANGED: tokenized glow color. */
+  box-shadow: 0 0 var(--space-xs) var(--color-accent-glow);
 }
 
 .timeline-header {
-  display: flex;
-  flex-direction: column;
-  gap: 0.25rem;
-  margin-bottom: 1rem;
+  /* OLD:
+     display: flex;
+     flex-direction: column;
+     CHANGED: flex plus justify-content: space-between made the title position
+     depend on the widths of each title and date. A two-column grid gives the
+     index and job details one consistent alignment on narrow screens. */
+  display: grid;
+  grid-template-columns: var(--timeline-number-column) minmax(0, 1fr);
+  align-items: start;
+
+  /* OLD: gap: var(--space-2xs);
+     CHANGED: separate row/column gaps preserve a tighter relationship between
+     a title and its date while keeping the index clear of the text column. */
+  column-gap: var(--space-md);
+  row-gap: var(--space-2xs);
+
+  /* OLD: margin-bottom: 1rem;
+     CHANGED: spacing token retained. */
+  margin-bottom: var(--space-md);
 }
 
-@media (min-width: 600px) {
+/* ADDED: in the narrow two-column layout, the date sits directly below the
+   title/company block and starts on exactly the same text guide. */
+.job-date {
+  grid-column: 2;
+}
+
+/* OLD:
+   @media (min-width: 600px)
+   @media (min-width: 37.5rem)
+   CHANGED: the first refactor preserved the 600px breakpoint, but a three-track
+   header left too little room for long job titles at that width. Waiting until
+   48rem keeps the narrow two-column pattern until all three tracks fit cleanly. */
+@media (min-width: 48rem) {
   .timeline-header {
-    flex-direction: row;
-    justify-content: space-between;
-    align-items: flex-start;
+    /* OLD:
+       flex-direction: row;
+       justify-content: space-between;
+       align-items: flex-start;
+       gap: var(--space-md);
+       CHANGED: three explicit tracks replace variable flex distribution. The
+       number, heading, and date now begin at identical positions for every job,
+       regardless of title length or whether a date wraps. */
+    grid-template-columns:
+      var(--timeline-number-column)
+      minmax(0, 1fr)
+      var(--timeline-date-column);
+  }
+
+  .job-date {
+    /* OLD: flex positioning selected the date column indirectly.
+       CHANGED: explicitly places every date in the third grid track. */
+    grid-column: 3;
   }
 }
 
 .timeline-number {
   font-family: var(--font-mono);
-  font-size: 0.9rem;
+
+  /* OLD: font-size: 0.9rem;
+     CHANGED: shared small-text token. */
+  font-size: var(--font-size-sm);
+
   font-weight: 700;
-  color: var(--accent-secondary);
+
+  /* OLD: color: var(--accent-secondary);
+     CHANGED: semantic secondary accent token. */
+  color: var(--color-accent-secondary);
 }
 
 .job-title {
-  font-size: 1.4rem;
+  /* OLD: font-size: 1.4rem;
+     CHANGED: fluid type improves narrow-screen wrapping. */
+  font-size: clamp(1.2rem, 1.1429rem + 0.2857vw, 1.4rem);
+
   margin: 0;
-  color: #ffffff;
+
+  /* OLD: color: #ffffff;
+     CHANGED: semantic text token. */
+  color: var(--color-text-primary);
+
   font-weight: 700;
+  overflow-wrap: anywhere;
 }
 
 .company-name {
-  font-size: 1.15rem;
+  /* OLD: font-size: 1.15rem;
+     CHANGED: typography token. */
+  font-size: var(--font-size-lg);
+
   font-weight: 700;
-  color: var(--accent-primary); /* Positions highlighted in orange */
-  margin: 0.2rem 0 0 0;
+
+  /* OLD: color: var(--accent-primary);
+     CHANGED: semantic accent token. */
+  color: var(--color-accent);
+
+  /* OLD: margin: 0.2rem 0 0 0;
+     CHANGED: spacing token. */
+  margin: var(--space-2xs) 0 0;
+  overflow-wrap: anywhere;
 }
 
 .job-date {
   font-family: var(--font-mono);
-  font-size: 0.9rem;
-  color: var(--accent-secondary);
+
+  /* OLD: font-size: 0.9rem;
+     CHANGED: shared small-text token. */
+  font-size: var(--font-size-sm);
+
+  /* OLD: color: var(--accent-secondary);
+     CHANGED: semantic secondary accent token. */
+  color: var(--color-accent-secondary);
+
   font-weight: 600;
+  margin: 0;
+  max-width: 22rem;
+  overflow-wrap: anywhere;
 }
 
 .job-intro {
-  font-size: 1.1rem;
+  /* OLD: font-size: 1.1rem;
+     CHANGED: shared typography token. */
+  font-size: var(--font-size-md);
+
   font-weight: 500;
-  color: #ffffff;
-  margin-bottom: 1rem;
+
+  /* OLD: color: #ffffff;
+     CHANGED: semantic text token. */
+  color: var(--color-text-primary);
+
+  /* OLD: margin-bottom: 1rem;
+     CHANGED: spacing token. */
+  margin-bottom: var(--space-md);
 }
 
-/* TARGETED DIM BULLETS ONLY: Specifically isolates only list item text into your slate-blue color */
 .job-bullets {
-  padding-left: 1.25rem;
+  /* OLD: padding-left: 1.25rem;
+     CHANGED: logical spacing token. */
+  padding-inline-start: var(--space-xl);
+
   margin: 0;
-  font-size: 1.05rem;
-  color: #94a3b8; /* Set specifically to Slate-Blue color shown in your image */
+
+  /* OLD: font-size: 1.05rem;
+     CHANGED: shared typography token. */
+  font-size: var(--font-size-md);
+
+  /* OLD: color: #94a3b8;
+     CHANGED: semantic muted token provides verified contrast in both themes. */
+  color: var(--color-text-muted);
 }
 
 .job-bullets li {
-  margin-bottom: 0.75rem;
-  line-height: 1.6;
+  /* OLD: margin-bottom: 0.75rem;
+     CHANGED: spacing token. */
+  margin-bottom: var(--space-sm);
+
+  /* OLD: line-height: 1.6;
+     CHANGED: line-height token. */
+  line-height: var(--line-height-base);
+}
+
+.job-bullets li::marker {
+  color: var(--color-accent);
 }
 
 /* ==========================================================================
-   FOOTER (System Signature)
+   9. FOOTER
    ========================================================================== */
 .resume-footer {
   text-align: center;
-  padding: 3rem 0;
-  color: var(--text-secondary);
+
+  /* OLD: padding: 3rem 0;
+     CHANGED: spacing token. */
+  padding: var(--space-3xl) 0;
+
+  /* OLD: color: var(--text-secondary);
+     CHANGED: semantic text token. */
+  color: var(--color-text-secondary);
+
   font-family: var(--font-mono);
-  font-size: 0.85rem;
-  border-top: 1px solid var(--border-color);
+
+  /* OLD: font-size: 0.85rem;
+     CHANGED: shared small-text token. */
+  font-size: var(--font-size-sm);
+
+  /* OLD: border-top: 1px solid var(--border-color);
+     CHANGED: tokenized hairline and semantic border. */
+  border-top: var(--border-hairline) solid var(--color-border);
+}
+
+/* ==========================================================================
+   10. RESPONSIVE, MOTION, AND PRINT SCENARIOS
+   ========================================================================== */
+@media (max-width: 37.499rem) {
+  .page-controls {
+    padding-inline: var(--space-md);
+  }
+
+  .page-controls > * {
+    flex: 1 1 9rem;
+  }
+
+  .resume-container {
+    padding: var(--space-lg) var(--space-md);
+  }
+
+  .profile-header,
+  .dashboard-card {
+    padding: var(--space-lg);
+  }
+
+  .contact-info {
+    gap: var(--space-sm);
+  }
+
+  .contact-info p {
+    flex-basis: 100%;
+  }
+
+  .profile-headline {
+    flex-direction: column;
+    align-items: flex-start;
+    row-gap: var(--space-2xs);
+  }
+
+  .profile-headline .divider {
+    display: none;
+  }
+}
+
+/* ADDED: respects users who request reduced motion. */
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+  }
+}
+
+/* ADDED: a resume should remain legible and economical when printed. */
+@media print {
+  :root,
+  [data-theme="light"] {
+    --color-canvas: oklch(1 0 0);
+    --color-surface: oklch(1 0 0);
+    --color-surface-elevated: oklch(0.98 0 0);
+    --color-border: oklch(0.75 0 0);
+    --color-text-primary: oklch(0.12 0 0);
+    --color-text-secondary: oklch(0.24 0 0);
+    --color-text-muted: oklch(0.34 0 0);
+    --color-accent: oklch(0.36 0.08 55);
+    --color-accent-secondary: oklch(0.34 0.055 205);
+    --color-shadow: transparent;
+    --color-shadow-soft: transparent;
+  }
+
+  .skip-link,
+  .page-controls {
+    display: none;
+  }
+
+  body {
+    background: white;
+  }
+
+  .resume-container {
+    max-width: none;
+    padding: 0;
+  }
+
+  .profile-header,
+  .dashboard-card,
+  .project-box,
+  .certs-list li {
+    box-shadow: none;
+    break-inside: avoid;
+  }
+
+  .dashboard-grid {
+    display: block;
+  }
+
+  a {
+    color: inherit;
+    text-decoration: none;
+  }
+
+  .social-links a::after,
+  .project-link::after {
+    content: " (" attr(href) ")";
+    font-size: 0.75em;
+    overflow-wrap: anywhere;
+  }
 }

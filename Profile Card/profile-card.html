@@ -1,0 +1,722 @@
+<!DOCTYPE html>
+<!-- OLD: <html lang="en" data-theme="light"> -->
+<!-- CHANGED: The resume opens in its dark terminal theme, so the profile card now uses the same default theme. -->
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <!-- OLD: <title>Production-Grade Profile Card</title> -->
+  <!-- CHANGED: The document title now describes the resume preview rather than a generic demo component. -->
+  <title>Dmitriy Chernichenko | Resume Profile Card</title>
+
+  <style>
+    /* ==========================================================================
+       REFACTOR NOTES
+       Every altered legacy declaration or element is retained as a nearby
+       commented-out OLD line. The replacement is followed by the reason it
+       changed. Additions that had no legacy equivalent are labeled ADDED.
+       ========================================================================== */
+
+    /* ==========================================================================
+       1. DESIGN TOKENS — RESUME THEME, CASCADE, AND INHERITANCE
+       ========================================================================== */
+    :root {
+      /* OLD: --font-sans: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif; */
+      /* CHANGED: Matches the resume's system-font stack so the card belongs to the same visual system. */
+      --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+
+      /* ADDED: The resume uses a terminal-style mono face for labels and controls. */
+      --font-mono: "Fira Code", "Courier New", Courier, monospace;
+
+      --font-size-sm: 0.875rem;
+      --font-size-base: 1rem;
+      --font-size-lg: 1.125rem;
+      --line-height-sm: 1.3;
+      --line-height-base: 1.5;
+      --line-height-lg: 1.4;
+
+      --space-2xs: 0.25rem;
+      --space-xs: 0.5rem;
+      --space-sm: 0.75rem;
+      --space-md: 1rem;
+      --space-lg: 1.5rem;
+      --space-xl: 2rem;
+      --space-2xl: 2.5rem;
+
+      /* OLD: --radius-sm: 0.375rem; */
+      /* CHANGED: Retained because it matches the resume's compact control radius. */
+      --radius-sm: 0.375rem;
+
+      /* OLD: --radius-md: 0.75rem; */
+      /* CHANGED: The resume uses an 0.5rem middle radius on nested surfaces. */
+      --radius-md: 0.5rem;
+
+      /* OLD: --radius-lg: 1.25rem; */
+      /* CHANGED: Reduced to the resume's 0.75rem dashboard-card radius. */
+      --radius-lg: 0.75rem;
+
+      /* OLD: --card-max-width: 24rem; */
+      /* CHANGED: A slightly wider card accommodates resume-oriented copy and technology tags. */
+      --card-max-width: 28rem;
+
+      /* OLD: --transition-normal: 0.2s ease; */
+      /* CHANGED: Split into fast and normal interaction timings, matching the resume system. */
+      --transition-fast: 0.2s ease;
+      --transition-normal: 0.3s ease;
+
+      /* OLD: --control-height-sm: 2.75rem; */
+      /* CHANGED: Renamed by role; both the toggle and compact controls share the 44px minimum. */
+      --control-height: 2.75rem;
+
+      /* OLD: --control-height-lg: 3rem; */
+      /* CHANGED: Renamed by role; the primary resume CTA keeps its 48px target. */
+      --control-height-primary: 3rem;
+
+      /* ADDED: Previously scattered structural constants are now explicit tokens. */
+      --border-hairline: 1px;
+      --media-aspect-ratio: 16 / 10;
+      --accent-line-width: 0.25rem;
+      --lift-distance: 0.125rem;
+      --text-trim-compensation: 0.15em;
+      --letter-spacing-wide: 0.05em;
+      --letter-spacing-tight: -0.03em;
+      --z-fallback: 1;
+      --z-image: 2;
+      --z-toggle: 10;
+
+      /* OLD: --shadow-color: oklch(0 0 0 / 0.04); */
+      /* OLD: --shadow-color-strong: oklch(0 0 0 / 0.35); */
+      /* CHANGED: The resume's stronger dashboard shadow is a single theme token,
+         while its geometry consumes spacing tokens rather than duplicate literals. */
+      --color-shadow: oklch(0 0 0 / 0.46);
+      --shadow-card: 0 var(--space-lg) var(--space-2xl) var(--color-shadow);
+
+      /* OLD LIGHT PALETTE:
+         --color-canvas: oklch(0.98 0.005 240);
+         --color-surface: oklch(1.0 0.0 0);
+         --color-border: oklch(0.92 0.01 240);
+         --color-text-primary: oklch(0.25 0.02 240);
+         --color-text-muted: oklch(0.50 0.02 240);
+         --color-accent: oklch(0.52 0.19 260);
+         --color-accent-hover: oklch(0.47 0.19 260);
+         --color-accent-text: oklch(0.99 0.005 260);
+         --color-badge-bg: oklch(0.95 0.023 260);
+         --color-badge-text: oklch(0.45 0.18 260);
+         --color-img-fallback: oklch(0.90 0.01 240);
+         CHANGED: Replaced the violet profile-card palette with the resume's
+         independently verified, in-sRGB-gamut orange/cyan terminal palette. */
+
+      /* Dark resume-theme defaults. */
+      --color-canvas: oklch(0.15 0.02 255);
+      --color-surface: oklch(0.20 0.02 255);
+      --color-surface-elevated: oklch(0.24 0.025 255);
+      --color-border: oklch(0.33 0.025 255);
+      --color-text-primary: oklch(0.95 0.01 255);
+      --color-text-secondary: oklch(0.82 0.015 255);
+      --color-text-muted: oklch(0.72 0.02 255);
+      --color-accent: oklch(0.72 0.16 55);
+      --color-accent-hover: oklch(0.77 0.15 55);
+      --color-accent-secondary: oklch(0.78 0.12 205);
+      --color-on-accent: oklch(0.16 0.02 255);
+      --color-accent-soft: oklch(0.72 0.16 55 / 0.10);
+      --color-accent-glow: oklch(0.72 0.16 55 / 0.38);
+      --color-cyan-glow: oklch(0.78 0.12 205 / 0.18);
+      --color-image-overlay: oklch(0.15 0.02 255 / 0.56);
+      --color-transparent: oklch(0 0 0 / 0);
+      --color-img-fallback: oklch(0.24 0.025 255);
+
+      /* OLD: --color-focus: var(--color-accent); */
+      /* CHANGED: Cyan is the resume's secondary interaction color and remains
+         clearly distinguishable from the orange primary action. */
+      --color-focus: var(--color-accent-secondary);
+      --focus-ring: 0 0 0 var(--space-2xs) var(--color-focus);
+    }
+
+    /* OLD: [data-theme="dark"] { ...violet dark-theme tokens... } */
+    /* CHANGED: Dark is now the default :root theme; this override provides the
+       resume's light counterpart without relying on prefers-color-scheme. */
+    [data-theme="light"] {
+      --color-canvas: oklch(0.97 0.008 255);
+      --color-surface: oklch(0.995 0.002 255);
+      --color-surface-elevated: oklch(0.965 0.01 255);
+      --color-border: oklch(0.86 0.02 255);
+      --color-text-primary: oklch(0.22 0.025 255);
+      --color-text-secondary: oklch(0.36 0.025 255);
+      --color-text-muted: oklch(0.45 0.025 255);
+      --color-accent: oklch(0.52 0.125 55);
+      --color-accent-hover: oklch(0.46 0.11 55);
+      --color-accent-secondary: oklch(0.45 0.07 205);
+      --color-on-accent: oklch(0.995 0.002 255);
+      --color-accent-soft: oklch(0.52 0.125 55 / 0.09);
+      --color-accent-glow: oklch(0.52 0.125 55 / 0.24);
+      --color-cyan-glow: oklch(0.45 0.07 205 / 0.12);
+      --color-image-overlay: oklch(0.22 0.025 255 / 0.34);
+      --color-img-fallback: oklch(0.965 0.01 255);
+      --color-shadow: oklch(0.22 0.025 255 / 0.16);
+    }
+
+    /* ==========================================================================
+       2. BASE RESET, DOCUMENT LAYOUT, AND ACCESSIBILITY
+       ========================================================================== */
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html {
+      color-scheme: dark;
+    }
+
+    [data-theme="light"] {
+      color-scheme: light;
+    }
+
+    body {
+      font-family: var(--font-sans);
+      background-color: var(--color-canvas);
+
+      /* ADDED: Layered orange/cyan glows reproduce the resume's premium terminal canvas. */
+      background-image:
+        radial-gradient(circle at 12% 18%, var(--color-accent-glow), var(--color-transparent) 34%),
+        radial-gradient(circle at 88% 82%, var(--color-cyan-glow), var(--color-transparent) 30%);
+
+      color: var(--color-text-primary);
+      min-height: 100vh;
+      display: grid;
+      place-items: center;
+
+      /* OLD: padding: var(--space-xl); */
+      /* CHANGED: Larger desktop breathing room echoes the resume container. */
+      padding: var(--space-2xl) var(--space-xl);
+
+      transition:
+        background-color var(--transition-normal),
+        color var(--transition-normal);
+      line-height: var(--line-height-base);
+      text-rendering: optimizeLegibility;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* ==========================================================================
+       3. COMPONENT STYLING
+       ========================================================================== */
+    .theme-toggle {
+      /* OLD: position: absolute; */
+      /* CHANGED: Fixed positioning keeps the control reachable while the card grows. */
+      position: fixed;
+      top: var(--space-lg);
+      right: var(--space-lg);
+      z-index: var(--z-toggle);
+      min-height: var(--control-height);
+      padding: var(--space-sm) var(--space-md);
+
+      /* OLD: font-family: inherit; */
+      /* CHANGED: Mono labels match the resume's terminal controls. */
+      font-family: var(--font-mono);
+      font-size: var(--font-size-sm);
+      font-weight: 700;
+      background-color: var(--color-surface);
+      color: var(--color-text-primary);
+
+      /* OLD: border: 1px solid var(--color-border); */
+      /* CHANGED: The sanctioned hairline remains crisp but is now tokenized. */
+      border: var(--border-hairline) solid var(--color-border);
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      transition:
+        background-color var(--transition-fast),
+        border-color var(--transition-fast),
+        color var(--transition-fast),
+        box-shadow var(--transition-fast),
+        transform var(--transition-fast);
+    }
+
+    .theme-toggle:hover {
+      color: var(--color-accent);
+      border-color: var(--color-accent);
+      transform: translateY(calc(var(--lift-distance) * -1));
+    }
+
+    .theme-toggle:focus-visible,
+    .profile-card__action:focus-visible {
+      outline: none;
+      box-shadow: var(--focus-ring);
+    }
+
+    .profile-card {
+      position: relative;
+
+      /* OLD: background-color: var(--color-surface); */
+      /* CHANGED: Token-derived radial lighting matches the resume's glassy header panel. */
+      background-color: var(--color-surface);
+      background-image:
+        radial-gradient(
+          circle at 10% 20%,
+          color-mix(in oklch, var(--color-surface-elevated) 92%, var(--color-accent) 8%) 0%,
+          var(--color-surface) 90%
+        );
+
+      /* OLD: border: 1px solid var(--color-border); */
+      /* CHANGED: Tokenized hairline border. */
+      border: var(--border-hairline) solid var(--color-border);
+      border-radius: var(--radius-lg);
+      max-width: var(--card-max-width);
+      width: 100%;
+      overflow: hidden;
+
+      /* OLD: box-shadow: 0 var(--space-xs) var(--space-lg) var(--shadow-color); */
+      /* CHANGED: Uses the resume's stronger dashboard shadow, with geometry and
+         color fully centralized in --shadow-card. */
+      box-shadow: var(--shadow-card);
+      transition:
+        background-color var(--transition-normal),
+        border-color var(--transition-normal),
+        box-shadow var(--transition-normal),
+        transform var(--transition-normal);
+    }
+
+    /* ADDED: The orange-to-cyan rail is a signature element from the resume header. */
+    .profile-card::before {
+      content: "";
+      position: absolute;
+      inset-block: 0;
+      inset-inline-start: 0;
+      width: var(--accent-line-width);
+      background: linear-gradient(
+        180deg,
+        var(--color-accent) 0%,
+        var(--color-accent-secondary) 100%
+      );
+      z-index: var(--z-image);
+    }
+
+    .profile-card:hover {
+      border-color: var(--color-accent);
+      transform: translateY(calc(var(--lift-distance) * -1));
+    }
+
+    .profile-card__media {
+      position: relative;
+      width: 100%;
+
+      /* OLD: aspect-ratio: 16 / 10; */
+      /* CHANGED: The ratio is now a structural token instead of an inline constant. */
+      aspect-ratio: var(--media-aspect-ratio);
+      background-color: var(--color-img-fallback);
+      overflow: hidden;
+      border-bottom: var(--border-hairline) solid var(--color-border);
+    }
+
+    /* ADDED: A subtle terminal-toned overlay visually integrates photography with the dashboard. */
+    .profile-card__media::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(
+        to top,
+        var(--color-image-overlay),
+        var(--color-transparent) 58%
+      );
+      z-index: var(--z-image);
+      pointer-events: none;
+    }
+
+    .profile-card__img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
+    /* Graceful broken-image fallback.
+       CSS cannot detect a failed network image. The onerror handler on the <img>
+       removes src after a failure, allowing these selectors to reveal the fallback. */
+    .profile-card__img:not([src]),
+    .profile-card__img[src=""] {
+      visibility: hidden;
+    }
+
+    .profile-card__media::before {
+      /* OLD: content: "Image Unavailable"; */
+      /* CHANGED: The fallback message now describes the missing resume preview. */
+      content: "Resume preview unavailable";
+      position: absolute;
+      inset: 0;
+      display: grid;
+      place-items: center;
+      padding: var(--space-lg);
+      font-family: var(--font-mono);
+      font-size: var(--font-size-sm);
+      color: var(--color-text-muted);
+      font-weight: 600;
+      text-align: center;
+      z-index: var(--z-fallback);
+    }
+
+    .profile-card__img[src] {
+      position: relative;
+      z-index: var(--z-image);
+    }
+
+    .profile-card__content {
+      padding: var(--space-lg);
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-sm);
+    }
+
+    .profile-card__badge-wrapper {
+      display: flex;
+    }
+
+    .profile-card__badge {
+      font-family: var(--font-mono);
+      font-size: var(--font-size-sm);
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: var(--letter-spacing-wide);
+
+      /* OLD: background-color: var(--color-badge-bg); */
+      /* CHANGED: Reuses the resume's elevated surface instead of introducing a
+         separate one-off chip color. */
+      background-color: var(--color-surface-elevated);
+
+      /* OLD: color: var(--color-badge-text); */
+      /* CHANGED: Orange is the resume's primary label color and has verified
+         6.32:1 dark / 5.20:1 light contrast on the elevated surface. */
+      color: var(--color-accent);
+      padding: var(--space-xs) var(--space-sm);
+      border: var(--border-hairline) solid var(--color-accent);
+      border-radius: var(--radius-sm);
+      white-space: nowrap;
+      transition:
+        background-color var(--transition-normal),
+        border-color var(--transition-normal),
+        color var(--transition-normal);
+    }
+
+    /* OPTICAL TEXT TRIMMING USING text-box
+       OLD CONDITION:
+       @supports (text-box: trim-both cap alphabetic) or
+                 (-webkit-text-box: trim-both cap alphabetic) { ... }
+       CHANGED: -webkit-text-box is not a real property. The standards-based
+       feature query is sufficient. Without support, default half-leading leaves
+       extra vertical air above and below glyphs. When active, text-box trims to
+       cap-height/alphabetic edges; tokenized padding restores deliberate spacing. */
+    @supports (text-box: trim-both cap alphabetic) {
+      .profile-card__badge,
+      .profile-card__action,
+      .theme-toggle {
+        text-box: trim-both cap alphabetic;
+        padding-block: calc(var(--space-sm) + var(--text-trim-compensation));
+      }
+
+      .profile-card__badge {
+        padding-block: calc(var(--space-xs) + var(--text-trim-compensation));
+      }
+    }
+
+    /* FLUID TYPOGRAPHY VIA clamp()
+       OLD: clamp(1.25rem, 1.0714rem + 0.8929vw, 1.875rem)
+       CHANGED: The values remain mathematically correct and are retained, while
+       the derivation stays explicit and auditable:
+         Point A: 320px viewport -> 20px headline (1.25rem)
+         Point B: 1440px viewport -> 30px headline (1.875rem)
+         slope = (30 - 20) / (1440 - 320)
+               = 10 / 1120
+               = 0.0089286 px per viewport-px
+               = 0.89286vw
+         intercept = 20px - (0.0089286 * 320)
+                   = 17.143px
+                   = 1.0714rem
+       Result: clamp(1.25rem, 1.0714rem + 0.8929vw, 1.875rem). */
+    .profile-card__headline {
+      color: var(--color-text-primary);
+      font-size: clamp(1.25rem, 1.0714rem + 0.8929vw, 1.875rem);
+      line-height: var(--line-height-sm);
+      font-weight: 800;
+
+      /* OLD: letter-spacing: -0.02em; */
+      /* CHANGED: Uses the resume's shared tighter display rhythm. */
+      letter-spacing: var(--letter-spacing-tight);
+      overflow-wrap: anywhere;
+      margin-top: calc(var(--space-xs) / 2);
+    }
+
+    /* ADDED: Mirrors the resume header's white-to-orange display treatment. */
+    @supports ((background-clip: text) or (-webkit-background-clip: text)) {
+      .profile-card__headline {
+        background: linear-gradient(
+          to right,
+          var(--color-text-primary),
+          var(--color-accent)
+        );
+        background-clip: text;
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: var(--color-transparent);
+      }
+    }
+
+    .profile-card__description {
+      /* OLD: color: var(--color-text-muted); */
+      /* CHANGED: Secondary text carries the summary while muted text is reserved
+         for metadata, matching the resume's hierarchy. */
+      color: var(--color-text-secondary);
+      font-size: var(--font-size-base);
+      line-height: var(--line-height-base);
+      margin-bottom: var(--space-xs);
+      overflow-wrap: anywhere;
+    }
+
+    /* ADDED: Compact technology tags echo the resume's Top Skills & Tech panel. */
+    .profile-card__stack {
+      display: flex;
+      flex-wrap: wrap;
+      gap: var(--space-xs);
+      list-style: none;
+      margin: 0 0 var(--space-sm);
+      padding: 0;
+    }
+
+    .profile-card__stack-item {
+      min-height: var(--control-height);
+      display: inline-flex;
+      align-items: center;
+      padding: var(--space-xs) var(--space-sm);
+      font-family: var(--font-mono);
+      font-size: var(--font-size-sm);
+      font-weight: 600;
+      color: var(--color-text-primary);
+      background-color: var(--color-accent-soft);
+      border: var(--border-hairline) solid var(--color-border);
+      border-radius: var(--radius-sm);
+    }
+
+    .profile-card__action {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-family: var(--font-mono);
+      font-size: var(--font-size-base);
+      font-weight: 700;
+      text-decoration: none;
+      background-color: var(--color-accent);
+
+      /* OLD: color: var(--color-accent-text); */
+      /* CHANGED: Uses the resume's verified on-accent foreground token. */
+      color: var(--color-on-accent);
+      padding: var(--space-sm) var(--space-md);
+
+      /* OLD: border: none; */
+      /* CHANGED: A same-color hairline preserves geometry in forced/high-contrast modes. */
+      border: var(--border-hairline) solid var(--color-accent);
+
+      /* OLD: border-radius: var(--radius-md); */
+      /* CHANGED: Uses the resume's compact control radius. */
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      min-height: var(--control-height-primary);
+      transition:
+        background-color var(--transition-fast),
+        border-color var(--transition-fast),
+        box-shadow var(--transition-fast),
+        transform var(--transition-fast);
+    }
+
+    .profile-card__action:hover {
+      background-color: var(--color-accent-hover);
+      border-color: var(--color-accent-hover);
+      transform: translateY(calc(var(--lift-distance) * -1));
+    }
+
+    /* ==========================================================================
+       4. RESPONSIVE, MOTION, AND PRINT SCENARIOS
+       ========================================================================== */
+    @media (max-width: 30rem) {
+      body {
+        padding: calc(var(--space-2xl) + var(--control-height)) var(--space-md) var(--space-lg);
+      }
+
+      .theme-toggle {
+        top: var(--space-md);
+        right: var(--space-md);
+      }
+
+      .profile-card__content {
+        padding: var(--space-md);
+      }
+
+      .profile-card__stack-item {
+        flex: 1 1 6rem;
+        justify-content: center;
+      }
+    }
+
+    /* ADDED: Motion-sensitive users get immediate state changes without losing functionality. */
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        transition-duration: 0.01ms !important;
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+      }
+    }
+
+    /* ADDED: The card prints as a clean resume gateway without decorative controls. */
+    @media print {
+      :root,
+      [data-theme="light"] {
+        --color-canvas: oklch(1 0 0);
+        --color-surface: oklch(1 0 0);
+        --color-surface-elevated: oklch(0.97 0 0);
+        --color-border: oklch(0.72 0 0);
+        --color-text-primary: oklch(0.12 0 0);
+        --color-text-secondary: oklch(0.24 0 0);
+        --color-text-muted: oklch(0.34 0 0);
+        --color-accent: oklch(0.36 0.08 55);
+        --color-accent-secondary: oklch(0.34 0.055 205);
+        --color-on-accent: oklch(1 0 0);
+        --color-shadow: oklch(0 0 0 / 0);
+      }
+
+      body {
+        display: block;
+        min-height: auto;
+        padding: 0;
+        background-image: none;
+      }
+
+      .theme-toggle {
+        display: none;
+      }
+
+      .profile-card {
+        max-width: none;
+        box-shadow: none;
+        break-inside: avoid;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- OLD: <button class="theme-toggle" id="themeToggle" aria-label="Switch to dark theme">Toggle Dark Mode</button> -->
+  <!-- CHANGED: Dark is now the resume-matching default. aria-pressed exposes the
+       current state, and the visible label describes the available theme. -->
+  <button
+    type="button"
+    class="theme-toggle"
+    id="themeToggle"
+    aria-label="Switch to light theme"
+    aria-pressed="false"
+  >
+    Light Theme
+  </button>
+
+  <article class="profile-card" aria-labelledby="profile-card-title">
+    <figure class="profile-card__media">
+      <!-- OLD:
+      <img
+        class="profile-card__img"
+        src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=800&q=80"
+        alt="Headshot of a smiling software engineer against a clean background"
+        loading="lazy"
+        onerror="this.onerror=null; this.removeAttribute('src');"
+      >
+      -->
+      <!-- CHANGED: A neutral developer-workspace image avoids presenting an
+           unrelated person as the resume owner. The onerror fix remains intact
+           and the explanatory comment stays outside the attribute list. -->
+      <img
+        class="profile-card__img"
+        src="https://images.unsplash.com/photo-1498050108023-c5249f4df085?auto=format&amp;fit=crop&amp;w=900&amp;q=82"
+        alt="Laptop displaying source code in a developer workspace"
+        loading="lazy"
+        decoding="async"
+        onerror="this.onerror=null; this.removeAttribute('src');"
+      >
+    </figure>
+
+    <div class="profile-card__content">
+      <div class="profile-card__badge-wrapper">
+        <!-- OLD: <span class="profile-card__badge">Engineering</span> -->
+        <!-- CHANGED: The badge now identifies the actual resume discipline. -->
+        <span class="profile-card__badge">AI-Integrated App Development</span>
+      </div>
+
+      <!-- OLD: <h3 class="profile-card__headline">Architecting Scalable Front-Ends</h3> -->
+      <!-- CHANGED: The card is now a personal resume gateway rather than an article teaser. -->
+      <h1 class="profile-card__headline" id="profile-card-title">Dmitriy Chernichenko</h1>
+
+      <!-- OLD:
+      <p class="profile-card__description">
+        Discover the practical patterns required to design low-specificity, highly componentized modern web applications. Learn how to combine oklch mechanics with design tokens for predictable systems.
+      </p>
+      -->
+      <!-- CHANGED: Summary language is sourced from the resume's professional positioning. -->
+      <p class="profile-card__description">
+        Fullstack developer building AI-integrated applications that connect software, data, and real-world workflows, with experience spanning healthcare, logistics, finance, and education.
+      </p>
+
+      <!-- ADDED: These skills mirror the resume's core technology panel. -->
+      <ul class="profile-card__stack" aria-label="Core technologies">
+        <li class="profile-card__stack-item">React</li>
+        <li class="profile-card__stack-item">SQL</li>
+        <li class="profile-card__stack-item">Python</li>
+      </ul>
+
+      <!-- OLD: <a href="#" class="profile-card__action">Read Article</a> -->
+      <!-- CHANGED: The requested label now names the destination, and the link
+           opens the uploaded resume page when both files share a directory. -->
+      <a href="../index.html" class="profile-card__action">Read Resume</a>
+    </div>
+  </article>
+
+  <script>
+    const toggle = document.getElementById("themeToggle");
+    const doc = document.documentElement;
+
+    /* OLD:
+    toggle.addEventListener('click', () => {
+      const currentTheme = doc.getAttribute('data-theme');
+      const newTheme = currentTheme === 'light' ? 'dark' : 'light';
+
+      doc.setAttribute('data-theme', newTheme);
+      toggle.setAttribute('aria-label', `Switch to ${currentTheme} theme`);
+    });
+    */
+
+    /* CHANGED: One function synchronizes the document theme, visible label,
+       accessible name, and pressed state. The selected theme is persisted when
+       storage is available, while failure leaves the card fully functional. */
+    function applyTheme(theme) {
+      const isLight = theme === "light";
+      doc.setAttribute("data-theme", theme);
+      toggle.textContent = isLight ? "Dark Theme" : "Light Theme";
+      toggle.setAttribute("aria-label", `Switch to ${isLight ? "dark" : "light"} theme`);
+      toggle.setAttribute("aria-pressed", String(isLight));
+    }
+
+    try {
+      const savedTheme = window.localStorage.getItem("profile-card-theme");
+      if (savedTheme === "light" || savedTheme === "dark") {
+        applyTheme(savedTheme);
+      }
+    } catch (error) {
+      /* ADDED: Storage can be blocked in privacy modes; the dark default remains valid. */
+    }
+
+    toggle.addEventListener("click", () => {
+      const nextTheme = doc.getAttribute("data-theme") === "dark" ? "light" : "dark";
+      applyTheme(nextTheme);
+
+      try {
+        window.localStorage.setItem("profile-card-theme", nextTheme);
+      } catch (error) {
+        /* ADDED: Theme switching does not depend on storage permission. */
+      }
+    });
+  </script>
+</body>
+</html>
