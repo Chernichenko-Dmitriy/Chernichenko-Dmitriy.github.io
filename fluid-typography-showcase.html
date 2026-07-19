@@ -1,0 +1,1287 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#030712">
+  <script src="theme.js"></script>
+  <meta name="description" content="An end-to-end showcase of using AI to generate, audit, verify, and deploy a modern fluid typography system with CSS custom properties, clamp(), ch units, and text-box trimming.">
+  <title>Fluid Typography | AI-Assisted Modern CSS Showcase</title>
+
+  <style>
+    :root {
+      --color-canvas: oklch(0.15 0.02 255);
+      --color-surface: oklch(0.20 0.02 255);
+      --color-surface-elevated: oklch(0.24 0.025 255);
+      --color-border: oklch(0.33 0.025 255);
+      --color-text-primary: oklch(0.95 0.01 255);
+      --color-text-secondary: oklch(0.82 0.015 255);
+      --color-text-muted: oklch(0.72 0.02 255);
+      --color-accent: oklch(0.72 0.16 55);
+      --color-accent-hover: oklch(0.77 0.15 55);
+      --color-accent-secondary: oklch(0.78 0.12 205);
+      --color-on-accent: oklch(0.16 0.02 255);
+      --color-accent-soft: oklch(0.72 0.16 55 / 0.10);
+      --color-accent-soft-strong: oklch(0.72 0.16 55 / 0.18);
+      --color-accent-glow: oklch(0.72 0.16 55 / 0.35);
+      --color-cyan-glow: oklch(0.78 0.12 205 / 0.18);
+      --color-overlay: oklch(0 0 0 / 0.32);
+      --color-code: oklch(0.13 0.02 255);
+      --color-success: oklch(0.78 0.12 145);
+      --color-shadow: oklch(0 0 0 / 0.42);
+
+      --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      --font-serif: Georgia, "Times New Roman", serif;
+      --font-mono: "Fira Code", "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+
+      --showcase-step--1: clamp(0.82rem, 0.79rem + 0.15vw, 0.92rem);
+      --showcase-step-0: clamp(1rem, 0.96rem + 0.2vw, 1.125rem);
+      --showcase-step-1: clamp(1.15rem, 1.07rem + 0.4vw, 1.4rem);
+      --showcase-step-2: clamp(1.45rem, 1.28rem + 0.85vw, 2rem);
+      --showcase-step-3: clamp(2rem, 1.65rem + 1.75vw, 3.15rem);
+      --showcase-step-4: clamp(2.65rem, 2.02rem + 3.15vw, 4.75rem);
+
+      --demo-step--1: clamp(0.875rem, 0.84rem + 0.18vw, 1rem);
+      --demo-step-0: clamp(1rem, 0.95rem + 0.25vw, 1.175rem);
+      --demo-step-1: clamp(1.25rem, 1.14rem + 0.55vw, 1.625rem);
+      --demo-step-2: clamp(1.75rem, 1.46rem + 1.45vw, 2.75rem);
+      --demo-step-3: clamp(2.5rem, 1.93rem + 2.85vw, 4.5rem);
+
+      --space-2xs: 0.25rem;
+      --space-xs: 0.5rem;
+      --space-sm: 0.75rem;
+      --space-md: clamp(1rem, 0.9rem + 0.5vw, 1.35rem);
+      --space-lg: clamp(1.5rem, 1.28rem + 1.1vw, 2.25rem);
+      --space-xl: clamp(2rem, 1.55rem + 2.25vw, 3.5rem);
+      --space-2xl: clamp(3rem, 2.15rem + 4.25vw, 5.75rem);
+
+      --radius-sm: 0.375rem;
+      --radius-md: 0.6rem;
+      --radius-lg: 0.85rem;
+      --radius-pill: 999px;
+      --layout-max: 76rem;
+      --reading-measure: 70ch;
+      --border-hairline: 1px;
+      --control-height: 2.75rem;
+      --transition-fast: 0.2s ease;
+      --transition-normal: 0.3s ease;
+      --focus-ring: 0 0 0 0.25rem var(--color-accent-secondary);
+      --shadow-card: 0 1rem 2.5rem var(--color-shadow);
+    }
+
+    [data-theme="light"] {
+      --color-canvas: oklch(0.97 0.008 255);
+      --color-surface: oklch(0.995 0.002 255);
+      --color-surface-elevated: oklch(0.965 0.01 255);
+      --color-border: oklch(0.86 0.02 255);
+      --color-text-primary: oklch(0.22 0.025 255);
+      --color-text-secondary: oklch(0.36 0.025 255);
+      --color-text-muted: oklch(0.45 0.025 255);
+      --color-accent: oklch(0.52 0.125 55);
+      --color-accent-hover: oklch(0.46 0.11 55);
+      --color-accent-secondary: oklch(0.45 0.07 205);
+      --color-on-accent: oklch(0.995 0.002 255);
+      --color-accent-soft: oklch(0.52 0.125 55 / 0.09);
+      --color-accent-soft-strong: oklch(0.52 0.125 55 / 0.15);
+      --color-accent-glow: oklch(0.52 0.125 55 / 0.20);
+      --color-cyan-glow: oklch(0.45 0.07 205 / 0.12);
+      --color-overlay: oklch(0.22 0.025 255 / 0.10);
+      --color-code: oklch(0.20 0.02 255);
+      --color-success: oklch(0.48 0.12 145);
+      --color-shadow: oklch(0.22 0.025 255 / 0.14);
+    }
+
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+    }
+
+    html {
+      color-scheme: dark;
+      scroll-behavior: smooth;
+    }
+
+    [data-theme="light"] {
+      color-scheme: light;
+    }
+
+    body {
+      margin: 0;
+      min-width: 0;
+      background:
+        radial-gradient(circle at 10% 8%, var(--color-accent-glow), transparent 30rem),
+        radial-gradient(circle at 92% 30%, var(--color-cyan-glow), transparent 28rem),
+        var(--color-canvas);
+      color: var(--color-text-primary);
+      font-family: var(--font-sans);
+      font-size: var(--showcase-step-0);
+      line-height: 1.65;
+      text-rendering: optimizeLegibility;
+      -webkit-font-smoothing: antialiased;
+      transition: background-color var(--transition-normal), color var(--transition-normal);
+    }
+
+    a {
+      color: inherit;
+    }
+
+    :where(a, button):focus-visible {
+      outline: none;
+      box-shadow: var(--focus-ring);
+    }
+
+    .skip-link {
+      position: fixed;
+      top: var(--space-xs);
+      left: var(--space-xs);
+      z-index: 1000;
+      transform: translateY(calc(-100% - 2rem));
+      padding: var(--space-sm) var(--space-md);
+      border-radius: var(--radius-sm);
+      background: var(--color-accent);
+      color: var(--color-on-accent);
+      font-weight: 800;
+      text-decoration: none;
+      transition: transform var(--transition-fast);
+    }
+
+    .skip-link:focus {
+      transform: translateY(0);
+    }
+
+    .site-shell {
+      width: min(100% - 2rem, var(--layout-max));
+      margin-inline: auto;
+      padding-block: var(--space-md) var(--space-2xl);
+    }
+
+    .site-nav {
+      position: static;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: var(--space-md);
+      padding: 0;
+      border: 0;
+      border-radius: 0;
+      background: transparent;
+      box-shadow: none;
+      backdrop-filter: none;
+    }
+
+    .nav-actions {
+      display: flex;
+      justify-content: flex-end;
+      flex-wrap: wrap;
+      gap: var(--space-xs);
+      margin-inline-start: auto;
+    }
+
+    .nav-link,
+    .theme-toggle,
+    .copy-button {
+      min-height: var(--control-height);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: var(--space-sm) var(--space-md);
+      border: var(--border-hairline) solid var(--color-border);
+      border-radius: var(--radius-sm);
+      background: var(--color-surface);
+      color: var(--color-text-primary);
+      font: inherit;
+      font-size: var(--showcase-step--1);
+      font-weight: 800;
+      text-decoration: none;
+      cursor: pointer;
+      transition:
+        transform var(--transition-fast),
+        color var(--transition-fast),
+        border-color var(--transition-fast),
+        background-color var(--transition-fast);
+    }
+
+    .nav-link:hover,
+    .theme-toggle:hover,
+    .copy-button:hover {
+      color: var(--color-accent);
+      border-color: var(--color-accent);
+      transform: translateY(-0.0625rem);
+    }
+
+    .nav-link--primary {
+      background: var(--color-accent);
+      border-color: var(--color-accent);
+      color: var(--color-on-accent);
+    }
+
+    .nav-link--primary:hover {
+      background: var(--color-accent-hover);
+      border-color: var(--color-accent-hover);
+      color: var(--color-on-accent);
+    }
+
+    .hero {
+      position: relative;
+      overflow: hidden;
+      margin-top: var(--space-lg);
+      padding: var(--space-2xl) var(--space-xl);
+      border: var(--border-hairline) solid var(--color-border);
+      border-radius: var(--radius-lg);
+      background:
+        linear-gradient(135deg, var(--color-accent-soft-strong), transparent 45%),
+        var(--color-surface);
+      box-shadow: var(--shadow-card);
+    }
+
+    .hero::before {
+      content: "";
+      position: absolute;
+      inset-block: 0;
+      inset-inline-start: 0;
+      width: 0.3rem;
+      background: linear-gradient(var(--color-accent), var(--color-accent-secondary));
+    }
+
+    .eyebrow {
+      margin: 0 0 var(--space-md);
+      color: var(--color-accent-secondary);
+      font-family: var(--font-mono);
+      font-size: var(--showcase-step--1);
+      font-weight: 800;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    h1,
+    h2,
+    h3 {
+      overflow-wrap: anywhere;
+    }
+
+    h1 {
+      max-width: 17ch;
+      margin: 0;
+      font-size: var(--showcase-step-4);
+      line-height: 1.02;
+      letter-spacing: -0.045em;
+      text-wrap: balance;
+    }
+
+    .hero-lead {
+      max-width: 62ch;
+      margin: var(--space-lg) 0 0;
+      color: var(--color-text-secondary);
+      font-size: var(--showcase-step-1);
+      line-height: 1.55;
+    }
+
+    .process-strip {
+      display: grid;
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+      gap: var(--space-sm);
+      margin-top: var(--space-xl);
+    }
+
+    .process-step {
+      padding: var(--space-md);
+      border: var(--border-hairline) solid var(--color-border);
+      border-radius: var(--radius-md);
+      background: var(--color-surface-elevated);
+    }
+
+    .process-number {
+      display: block;
+      margin-bottom: var(--space-xs);
+      color: var(--color-accent);
+      font-family: var(--font-mono);
+      font-weight: 800;
+    }
+
+    .process-step strong {
+      display: block;
+      font-size: var(--showcase-step--1);
+    }
+
+    main {
+      display: grid;
+      gap: var(--space-xl);
+      margin-top: var(--space-xl);
+    }
+
+    .section-card {
+      padding: var(--space-xl);
+      border: var(--border-hairline) solid var(--color-border);
+      border-radius: var(--radius-lg);
+      background: var(--color-surface);
+      box-shadow: 0 0.75rem 2rem var(--color-shadow);
+    }
+
+    .section-header {
+      display: grid;
+      grid-template-columns: auto minmax(0, 1fr);
+      gap: var(--space-md);
+      align-items: start;
+      margin-bottom: var(--space-lg);
+    }
+
+    .section-index {
+      min-width: 2.75rem;
+      min-height: 2.75rem;
+      display: inline-grid;
+      place-items: center;
+      border: var(--border-hairline) solid var(--color-accent);
+      border-radius: 50%;
+      color: var(--color-accent);
+      font-family: var(--font-mono);
+      font-weight: 800;
+    }
+
+    .section-card h2 {
+      margin: 0;
+      color: var(--color-text-primary);
+      font-size: var(--showcase-step-3);
+      line-height: 1.12;
+      letter-spacing: -0.03em;
+      text-wrap: balance;
+    }
+
+    .section-kicker {
+      margin: var(--space-xs) 0 0;
+      color: var(--color-text-muted);
+      font-size: var(--showcase-step-1);
+    }
+
+    .narrative-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: var(--space-lg);
+    }
+
+    .narrative-panel {
+      padding: var(--space-lg);
+      border: var(--border-hairline) solid var(--color-border);
+      border-radius: var(--radius-md);
+      background: var(--color-surface-elevated);
+    }
+
+    .narrative-panel h3 {
+      margin: 0 0 var(--space-sm);
+      color: var(--color-accent);
+      font-size: var(--showcase-step-2);
+    }
+
+    .narrative-panel p {
+      margin: 0;
+      color: var(--color-text-secondary);
+    }
+
+    .concept-grid {
+      display: grid;
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+      gap: var(--space-md);
+    }
+
+    .concept-card {
+      min-width: 0;
+      padding: var(--space-lg);
+      border: var(--border-hairline) solid var(--color-border);
+      border-radius: var(--radius-md);
+      background: var(--color-surface-elevated);
+      transition: transform var(--transition-normal), border-color var(--transition-normal);
+    }
+
+    .concept-card:hover {
+      transform: translateY(-0.15rem);
+      border-color: var(--color-accent);
+    }
+
+    .concept-token {
+      display: inline-block;
+      margin-bottom: var(--space-sm);
+      color: var(--color-accent-secondary);
+      font-family: var(--font-mono);
+      font-size: var(--showcase-step--1);
+      font-weight: 800;
+    }
+
+    .concept-card h3 {
+      margin: 0 0 var(--space-sm);
+      font-size: var(--showcase-step-1);
+      line-height: 1.25;
+    }
+
+    .concept-card p {
+      margin: 0;
+      color: var(--color-text-muted);
+      font-size: var(--showcase-step--1);
+    }
+
+    .code-panel {
+      overflow: hidden;
+      border: var(--border-hairline) solid var(--color-border);
+      border-radius: var(--radius-md);
+      background: var(--color-code);
+    }
+
+    .code-toolbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: var(--space-md);
+      padding: var(--space-sm) var(--space-md);
+      border-bottom: var(--border-hairline) solid var(--color-border);
+      background: color-mix(in oklch, var(--color-surface-elevated) 82%, black 18%);
+    }
+
+    [data-theme="light"] .code-toolbar {
+      background: var(--color-surface-elevated);
+    }
+
+    .code-label {
+      color: var(--color-accent-secondary);
+      font-family: var(--font-mono);
+      font-size: var(--showcase-step--1);
+      font-weight: 800;
+    }
+
+    pre {
+      margin: 0;
+      padding: var(--space-lg);
+      overflow: auto;
+      color: oklch(0.90 0.01 255);
+      font-family: var(--font-mono);
+      font-size: clamp(0.78rem, 0.74rem + 0.2vw, 0.9rem);
+      line-height: 1.65;
+      tab-size: 2;
+      white-space: pre;
+    }
+
+    .before-preview {
+      padding: var(--space-lg);
+      border: var(--border-hairline) dashed var(--color-border);
+      border-radius: var(--radius-md);
+      background: white;
+      color: #111;
+      font-family: serif;
+    }
+
+    .before-preview article {
+      max-width: none;
+    }
+
+    .before-preview h1,
+    .before-preview h2 {
+      letter-spacing: normal;
+      text-wrap: wrap;
+    }
+
+    .before-preview h1 {
+      max-width: none;
+      color: #111;
+      font-size: 2em;
+      line-height: normal;
+    }
+
+    .before-preview h2 {
+      color: #111;
+      font-size: 1.5em;
+    }
+
+    .before-preview p,
+    .before-preview blockquote {
+      color: #111;
+    }
+
+    .before-layout {
+      display: grid;
+      grid-template-columns: minmax(0, 1.15fr) minmax(18rem, 0.85fr);
+      gap: var(--space-lg);
+      align-items: start;
+    }
+
+    .prompt-build {
+      display: grid;
+      grid-template-columns: minmax(0, 0.85fr) minmax(0, 1.15fr);
+      gap: var(--space-lg);
+      align-items: start;
+    }
+
+    .prompt-layers {
+      display: grid;
+      gap: var(--space-sm);
+    }
+
+    .prompt-layer {
+      padding: var(--space-md);
+      border-inline-start: 0.25rem solid var(--color-accent);
+      border-radius: 0 var(--radius-md) var(--radius-md) 0;
+      background: var(--color-surface-elevated);
+    }
+
+    .prompt-layer strong {
+      display: block;
+      margin-bottom: var(--space-2xs);
+      color: var(--color-text-primary);
+    }
+
+    .prompt-layer p {
+      margin: 0;
+      color: var(--color-text-muted);
+      font-size: var(--showcase-step--1);
+    }
+
+    .audit-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: var(--space-md);
+      margin-top: var(--space-lg);
+    }
+
+    .audit-item {
+      padding: var(--space-md);
+      border: var(--border-hairline) solid var(--color-border);
+      border-radius: var(--radius-md);
+      background: var(--color-surface-elevated);
+    }
+
+    .audit-item strong {
+      color: var(--color-success);
+    }
+
+    .audit-item p {
+      margin: var(--space-xs) 0 0;
+      color: var(--color-text-muted);
+    }
+
+    .result-stage {
+      padding: clamp(1rem, 0.6rem + 2vw, 2.5rem);
+      border: var(--border-hairline) solid var(--color-border);
+      border-radius: var(--radius-lg);
+      background: oklch(0.975 0.01 80);
+      color: oklch(0.22 0.025 55);
+      container-type: inline-size;
+    }
+
+    .result-stage .magazine-article {
+      width: min(calc(100% - 2rem), 70ch);
+      margin-inline: auto;
+      padding-block: clamp(2rem, 1.71rem + 1.45vw, 3rem);
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: var(--demo-step-0);
+      line-height: 1.7;
+    }
+
+    .result-stage .article-header {
+      margin-bottom: clamp(3rem, 2.43rem + 2.85vw, 5rem);
+    }
+
+    .result-stage .article-category {
+      display: inline-block;
+      margin-bottom: clamp(1.25rem, 1.11rem + 0.7vw, 1.75rem);
+      color: oklch(0.53 0.14 45);
+      font-family: var(--font-sans);
+      font-size: var(--demo-step--1);
+      font-weight: 800;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .result-stage .article-title {
+      max-width: 18ch;
+      margin: 0;
+      color: oklch(0.22 0.025 55);
+      font-family: var(--font-sans);
+      font-size: var(--demo-step-3);
+      font-weight: 800;
+      line-height: 1.05;
+      letter-spacing: -0.045em;
+      text-wrap: balance;
+    }
+
+    .result-stage .article-lead {
+      max-width: 52ch;
+      margin-block: clamp(1.25rem, 1.11rem + 0.7vw, 1.75rem);
+      color: oklch(0.42 0.025 55);
+      font-family: var(--font-sans);
+      font-size: var(--demo-step-1);
+      line-height: 1.45;
+    }
+
+    .result-stage .article-meta {
+      padding-top: 1rem;
+      border-top: 1px solid oklch(0.84 0.025 75);
+      color: oklch(0.48 0.025 55);
+      font-family: var(--font-sans);
+      font-size: var(--demo-step--1);
+    }
+
+    .result-stage .article-body {
+      max-width: 70ch;
+    }
+
+    .result-stage .article-body p {
+      margin-block: 0 clamp(1.25rem, 1.11rem + 0.7vw, 1.75rem);
+    }
+
+    .result-stage .article-body h2 {
+      margin-block: clamp(3rem, 2.43rem + 2.85vw, 5rem) 1rem;
+      color: oklch(0.22 0.025 55);
+      font-family: var(--font-sans);
+      font-size: var(--demo-step-2);
+      line-height: 1.15;
+      letter-spacing: -0.025em;
+      text-wrap: balance;
+    }
+
+    .result-stage blockquote {
+      margin: clamp(2rem, 1.71rem + 1.45vw, 3rem) 0;
+      padding-inline-start: 1.25rem;
+      border-inline-start: 0.25rem solid oklch(0.53 0.14 45);
+      color: oklch(0.38 0.1 45);
+      font-family: var(--font-sans);
+      font-size: var(--demo-step-1);
+      font-weight: 700;
+      line-height: 1.45;
+    }
+
+    .result-stage .drop-cap {
+      float: left;
+      margin-inline-end: 0.12em;
+      color: oklch(0.53 0.14 45);
+      font-family: var(--font-sans);
+      font-size: var(--demo-step-3);
+      font-weight: 800;
+      line-height: 0.78;
+    }
+
+    @supports (text-box: trim-both cap alphabetic) {
+      .result-stage .article-category,
+      .result-stage .article-title,
+      .result-stage .drop-cap,
+      .eyebrow,
+      .nav-link,
+      .theme-toggle,
+      .copy-button {
+        text-box: trim-both cap alphabetic;
+      }
+    }
+
+    .result-explanation {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: var(--space-md);
+      margin-top: var(--space-lg);
+    }
+
+    .result-note {
+      padding: var(--space-md);
+      border: var(--border-hairline) solid var(--color-border);
+      border-radius: var(--radius-md);
+      background: var(--color-surface-elevated);
+    }
+
+    .result-note code {
+      color: var(--color-accent-secondary);
+      font-family: var(--font-mono);
+    }
+
+    .result-note h3 {
+      margin: 0 0 var(--space-xs);
+      font-size: var(--showcase-step-1);
+    }
+
+    .result-note p {
+      margin: 0;
+      color: var(--color-text-muted);
+      font-size: var(--showcase-step--1);
+    }
+
+    .verification-list {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: var(--space-sm);
+      padding: 0;
+      margin: 0;
+      list-style: none;
+    }
+
+    .verification-list li {
+      position: relative;
+      padding: var(--space-md) var(--space-md) var(--space-md) 3rem;
+      border: var(--border-hairline) solid var(--color-border);
+      border-radius: var(--radius-md);
+      background: var(--color-surface-elevated);
+    }
+
+    .verification-list li::before {
+      content: "✓";
+      position: absolute;
+      left: var(--space-md);
+      color: var(--color-success);
+      font-family: var(--font-mono);
+      font-weight: 900;
+    }
+
+    .site-footer {
+      margin-top: var(--space-xl);
+      padding: var(--space-xl);
+      border-top: var(--border-hairline) solid var(--color-border);
+      color: var(--color-text-muted);
+      text-align: center;
+      font-family: var(--font-mono);
+      font-size: var(--showcase-step--1);
+    }
+
+    .noscript-note {
+      margin-top: var(--space-md);
+      padding: var(--space-md);
+      border: var(--border-hairline) solid var(--color-border);
+      border-radius: var(--radius-md);
+      color: var(--color-text-secondary);
+      background: var(--color-surface);
+    }
+
+    @media (max-width: 64rem) {
+      .process-strip,
+      .concept-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .prompt-build,
+      .before-layout {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 42rem) {
+      .site-shell {
+        width: min(100% - 1rem, var(--layout-max));
+      }
+
+      .site-nav {
+        align-items: stretch;
+        flex-direction: column;
+      }
+
+      .nav-actions {
+        display: grid;
+        grid-template-columns: 1fr;
+        width: 100%;
+        margin-inline-start: 0;
+      }
+
+      .site-nav > .nav-link,
+      .nav-actions > .nav-link,
+      .nav-actions > .theme-toggle {
+        width: 100%;
+      }
+
+      .hero,
+      .section-card {
+        padding: var(--space-lg);
+      }
+
+      .process-strip,
+      .concept-grid,
+      .narrative-grid,
+      .audit-grid,
+      .result-explanation,
+      .verification-list {
+        grid-template-columns: 1fr;
+      }
+
+      .section-header {
+        grid-template-columns: 1fr;
+      }
+
+      .section-index {
+        width: 2.75rem;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      html {
+        scroll-behavior: auto;
+      }
+
+      *,
+      *::before,
+      *::after {
+        transition-duration: 0.01ms !important;
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+      }
+    }
+
+    @media print {
+      :root,
+      [data-theme="light"] {
+        --color-canvas: white;
+        --color-surface: white;
+        --color-surface-elevated: #f7f7f7;
+        --color-border: #aaa;
+        --color-text-primary: #111;
+        --color-text-secondary: #222;
+        --color-text-muted: #444;
+        --color-accent: #8a3b00;
+        --color-accent-secondary: #006b75;
+        --color-shadow: transparent;
+      }
+
+      body {
+        background: white;
+      }
+
+      .site-nav,
+      .copy-button {
+        display: none;
+      }
+
+      .site-shell {
+        width: 100%;
+        padding: 0;
+      }
+
+      .hero,
+      .section-card {
+        box-shadow: none;
+        break-inside: avoid;
+      }
+
+      pre {
+        white-space: pre-wrap;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <a class="skip-link" href="#main-content">Skip to main content</a>
+
+  <div class="site-shell">
+    <nav class="site-nav" aria-label="Portfolio navigation">
+      <a class="nav-link nav-link--primary" href="index.html">← Back to Resume</a>
+
+      <div class="nav-actions">
+        <a class="nav-link" href="Profile Card/profile-card.html">Profile Card</a>
+        <a class="nav-link" href="#final-result">View Final Result</a>
+        <button
+          type="button"
+          class="theme-toggle"
+          id="themeToggle"
+          data-theme-toggle
+          aria-label="Switch to light theme"
+          aria-pressed="false"
+        >
+          Light Theme
+        </button>
+      </div>
+    </nav>
+
+    <header class="hero">
+      <p class="eyebrow">Design Technologist · AI-Assisted CSS Engineering</p>
+      <h1>Fluid Typography, from raw HTML to an audited reading system.</h1>
+      <p class="hero-lead">
+        This showcase documents the full assignment from A to Z: identifying the reading problem,
+        recognizing the modern CSS tools that solve it, constructing a precise AI prompt, auditing
+        the generated code, and presenting the final responsive editorial.
+      </p>
+
+      <div class="process-strip" aria-label="Project workflow">
+        <div class="process-step"><span class="process-number">01</span><strong>Problem</strong></div>
+        <div class="process-step"><span class="process-number">02</span><strong>CSS Concepts</strong></div>
+        <div class="process-step"><span class="process-number">03</span><strong>Raw HTML</strong></div>
+        <div class="process-step"><span class="process-number">04</span><strong>AI Prompt</strong></div>
+        <div class="process-step"><span class="process-number">05</span><strong>Audit &amp; Result</strong></div>
+      </div>
+    </header>
+
+    <main id="main-content">
+      <section class="section-card" aria-labelledby="problem-title">
+        <div class="section-header">
+          <span class="section-index">01</span>
+          <div>
+            <h2 id="problem-title">Why long-form reading needed a better system</h2>
+            <p class="section-kicker">The transition from rigid pages to fluid, device-aware typography.</p>
+          </div>
+        </div>
+
+        <div class="narrative-grid">
+          <article class="narrative-panel">
+            <h3>Before</h3>
+            <p>
+              Reading long-form content on the web was often frustrating. On mobile, lines could
+              break awkwardly and create rapid eye fatigue. On widescreen monitors, lines stretched
+              so far that readers struggled to locate the beginning of the next line.
+            </p>
+          </article>
+
+          <article class="narrative-panel">
+            <h3>Modern approach</h3>
+            <p>
+              A Design Technologist now builds a system-wide fluid typographic grid rather than
+              patching individual screen sizes. AI can draft that system, but the developer must
+              direct, audit, verify, and deploy it so typographic harmony survives every viewport
+              without a mountain of media queries.
+            </p>
+          </article>
+        </div>
+      </section>
+
+      <section class="section-card" aria-labelledby="concepts-title">
+        <div class="section-header">
+          <span class="section-index">02</span>
+          <div>
+            <h2 id="concepts-title">The modern CSS subjects that make it possible</h2>
+            <p class="section-kicker">Five coordinated ideas turn isolated styles into a responsive typographic system.</p>
+          </div>
+        </div>
+
+        <div class="concept-grid">
+          <article class="concept-card">
+            <span class="concept-token">:root { --tokens }</span>
+            <h3>System-Wide Design Tokens</h3>
+            <p>Custom Properties establish one inherited type, spacing, color, and rhythm system.</p>
+          </article>
+
+          <article class="concept-card">
+            <span class="concept-token">clamp()</span>
+            <h3>Fluid Scaling Math</h3>
+            <p>Bounded formulas interpolate smoothly between minimum and maximum values.</p>
+          </article>
+
+          <article class="concept-card">
+            <span class="concept-token">65–75ch</span>
+            <h3>Perfect Reading Measure</h3>
+            <p>Character-based widths protect the reader from lines that are too short or too long.</p>
+          </article>
+
+          <article class="concept-card">
+            <span class="concept-token">text-box</span>
+            <h3>Optical Trimming</h3>
+            <p>Progressive enhancement removes excess font-metric space where browser support exists.</p>
+          </article>
+
+          <article class="concept-card">
+            <span class="concept-token">DevTools</span>
+            <h3>Technical Verification</h3>
+            <p>Computed styles, responsive mode, zoom, focus, and accessibility checks validate the result.</p>
+          </article>
+        </div>
+      </section>
+
+      <section class="section-card" aria-labelledby="before-title">
+        <div class="section-header">
+          <span class="section-index">03</span>
+          <div>
+            <h2 id="before-title">The semantic HTML before styling</h2>
+            <p class="section-kicker">The content structure is clean and meaningful, but it has no deliberate reading system yet.</p>
+          </div>
+        </div>
+
+        <div class="before-layout">
+          <div class="code-panel">
+            <div class="code-toolbar">
+              <span class="code-label">before.html</span>
+              <button class="copy-button" type="button" data-copy-target="rawHtmlCode">Copy HTML</button>
+            </div>
+            <pre><code id="rawHtmlCode">&lt;!DOCTYPE html&gt;
+&lt;html lang=&quot;en&quot;&gt;
+&lt;head&gt;
+  &lt;meta charset=&quot;UTF-8&quot;&gt;
+  &lt;meta name=&quot;viewport&quot; content=&quot;width=device-width, initial-scale=1.0&quot;&gt;
+  &lt;title&gt;The Architecture of Fluid Layouts&lt;/title&gt;
+&lt;/head&gt;
+&lt;body&gt;
+  &lt;article class=&quot;magazine-article&quot;&gt;
+    &lt;header class=&quot;article-header&quot;&gt;
+      &lt;span class=&quot;article-category&quot;&gt;Technology &amp;amp; Design&lt;/span&gt;
+      &lt;h1 class=&quot;article-title&quot;&gt;The Architecture of Fluid Layouts&lt;/h1&gt;
+      &lt;p class=&quot;article-lead&quot;&gt;How web design moved away from static pixels to embrace the responsive, organic physics of the screen.&lt;/p&gt;
+      &lt;div class=&quot;article-meta&quot;&gt;Published on &lt;time datetime=&quot;2026-07-16&quot;&gt;July 16, 2026&lt;/time&gt; by Alex Chen&lt;/div&gt;
+    &lt;/header&gt;
+
+    &lt;div class=&quot;article-body&quot;&gt;
+      &lt;p&gt;&lt;span class=&quot;drop-cap&quot;&gt;W&lt;/span&gt;eb typography has historically been a struggle between the designer&#x27;s intent and the user&#x27;s viewport. Early web pages forced layout structures into rigid boxes, treating the web browser like a sheet of paper. But digital interfaces are dynamic, liquid, and unpredictable.&lt;/p&gt;
+
+      &lt;h2&gt;The Search for Perfect Contrast&lt;/h2&gt;
+      &lt;p&gt;Using older CSS models, calculating contrast meant constantly converting hex codes or managing complex RGB values. Today&#x27;s modern standards allow us to declare colors natively via perceptual spacing, ensuring that our dark and light themes stay accessible without guesswork.&lt;/p&gt;
+
+      &lt;blockquote&gt;
+        &quot;Typography is the craft of framing human thought. On the web, that frame must be liquid.&quot;
+      &lt;/blockquote&gt;
+
+      &lt;h2&gt;Stripping Away Font Metadata&lt;/h2&gt;
+      &lt;p&gt;Fonts have built-in spacing above and below letters (known as half-leading). This empty space often breaks vertical layout grids. With modern CSS features, we can trim this space completely, aligning text elements directly against structural layout boundaries.&lt;/p&gt;
+    &lt;/div&gt;
+  &lt;/article&gt;
+&lt;/body&gt;
+&lt;/html&gt;</code></pre>
+          </div>
+
+          <div class="before-preview" aria-label="Simplified unstyled article preview">
+            <article>
+              <header>
+                <span>Technology &amp; Design</span>
+                <h1>The Architecture of Fluid Layouts</h1>
+                <p>How web design moved away from static pixels to embrace the responsive, organic physics of the screen.</p>
+                <p>Published on July 16, 2026 by Alex Chen</p>
+              </header>
+              <p>Web typography has historically been a struggle between the designer's intent and the user's viewport.</p>
+              <h2>The Search for Perfect Contrast</h2>
+              <p>Without a system, default widths and type metrics control the reading experience.</p>
+              <blockquote>“Typography is the craft of framing human thought.”</blockquote>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <section class="section-card" aria-labelledby="prompt-title">
+        <div class="section-header">
+          <span class="section-index">04</span>
+          <div>
+            <h2 id="prompt-title">How the AI prompt was engineered</h2>
+            <p class="section-kicker">The prompt is not “make this look good.” Each layer defines a technical contract that can be audited.</p>
+          </div>
+        </div>
+
+        <div class="prompt-build">
+          <div class="prompt-layers">
+            <div class="prompt-layer">
+              <strong>Layer 1 — Lock the structure</strong>
+              <p>The AI may style the supplied semantic HTML, but it may not replace it with div-heavy markup.</p>
+            </div>
+
+            <div class="prompt-layer">
+              <strong>Layer 2 — Define the system</strong>
+              <p>Type, spacing, colors, and measures must originate as inherited tokens on :root.</p>
+            </div>
+
+            <div class="prompt-layer">
+              <strong>Layer 3 — Specify the math</strong>
+              <p>Fluid values must be bounded with clamp() and mix rem with vw in the preferred expression.</p>
+            </div>
+
+            <div class="prompt-layer">
+              <strong>Layer 4 — Protect readability</strong>
+              <p>The body is limited to 65–75ch while headings and lead copy use narrower measures.</p>
+            </div>
+
+            <div class="prompt-layer">
+              <strong>Layer 5 — Require an audit path</strong>
+              <p>The response must include progressive enhancement, accessibility, reduced motion, print, and explanatory comments.</p>
+            </div>
+          </div>
+
+          <div class="code-panel">
+            <div class="code-toolbar">
+              <span class="code-label">AI prompt</span>
+              <button class="copy-button" type="button" data-copy-target="promptCode">Copy Prompt</button>
+            </div>
+            <pre><code id="promptCode">Act as a senior CSS systems engineer. Generate a production-ready stylesheet for the supplied semantic HTML without changing the HTML structure.
+
+Architecture requirements:
+1. Define a system-wide typography and spacing scale as CSS Custom Properties on :root. Do not place hardcoded font-size values directly on article elements.
+2. Create fluid type tokens for body text, h1, h2, lead text, metadata, and blockquote using clamp().
+3. In every preferred clamp() expression, combine rem and vw units so scaling remains responsive while preserving browser zoom and user font-size behavior.
+4. Constrain the article body to an optimal reading measure between 65ch and 75ch. Use a narrower measure for the headline and lead.
+5. Build a unified vertical rhythm from spacing tokens so margins and padding flow from the same system.
+6. Apply text-box: trim-both cap alphabetic to .article-category, .article-title, and .drop-cap inside an @supports feature query.
+7. Do not invent invalid vendor-prefixed properties. When text-box is unsupported, preserve alignment through controlled line-height, padding, and baseline-aware spacing.
+8. Use oklch() design tokens for canvas, surface, text, muted text, border, and accent colors.
+9. Keep media queries to a minimum. The typography, spacing, and content width should adapt primarily through clamp(), min(), max(), and logical properties.
+10. Include accessible focus styles, reduced-motion handling, readable contrast, and sensible print behavior.
+11. Add concise comments that explain the clamp() math, the 70ch reading measure, and the progressive-enhancement fallback for text-box.
+
+Return only the complete CSS stylesheet.</code></pre>
+          </div>
+        </div>
+      </section>
+
+      <section class="section-card" aria-labelledby="audit-title">
+        <div class="section-header">
+          <span class="section-index">05</span>
+          <div>
+            <h2 id="audit-title">Auditing the generated stylesheet</h2>
+            <p class="section-kicker">AI provides the draft. The developer remains responsible for standards, accessibility, and maintainability.</p>
+          </div>
+        </div>
+
+        <div class="code-panel">
+          <div class="code-toolbar">
+            <span class="code-label">audited CSS excerpt</span>
+            <button class="copy-button" type="button" data-copy-target="cssCode">Copy CSS</button>
+          </div>
+          <pre><code id="cssCode">:root {
+  --size-step-0: clamp(1rem, 0.95rem + 0.25vw, 1.175rem);
+  --size-step-1: clamp(1.25rem, 1.14rem + 0.55vw, 1.625rem);
+  --size-step-2: clamp(1.75rem, 1.46rem + 1.45vw, 2.75rem);
+  --size-step-3: clamp(2.5rem, 1.93rem + 2.85vw, 4.5rem);
+
+  --measure-reading: 70ch;
+  --measure-heading: 18ch;
+  --measure-lead: 52ch;
+
+  --space-s: clamp(0.75rem, 0.68rem + 0.35vw, 1rem);
+  --space-m: clamp(1.25rem, 1.11rem + 0.7vw, 1.75rem);
+  --space-l: clamp(2rem, 1.71rem + 1.45vw, 3rem);
+}
+
+.magazine-article {
+  width: min(calc(100% - 2 * var(--space-m)), var(--measure-reading));
+  margin-inline: auto;
+}
+
+.article-title {
+  max-width: var(--measure-heading);
+  font-size: var(--size-step-3);
+}
+
+.article-body {
+  max-width: var(--measure-reading);
+}
+
+@supports (text-box: trim-both cap alphabetic) {
+  .article-category,
+  .article-title,
+  .drop-cap {
+    text-box: trim-both cap alphabetic;
+  }
+}</code></pre>
+        </div>
+
+        <div class="audit-grid">
+          <article class="audit-item">
+            <strong>Verified: inherited tokens</strong>
+            <p>Element rules consume shared custom properties instead of creating unrelated font sizes.</p>
+          </article>
+
+          <article class="audit-item">
+            <strong>Verified: accessible fluid formulas</strong>
+            <p>The preferred clamp() terms combine rem and vw rather than relying on viewport units alone.</p>
+          </article>
+
+          <article class="audit-item">
+            <strong>Corrected: text-box fallback</strong>
+            <p>No invented vendor prefix is used. Unsupported browsers keep deliberate line-height and spacing.</p>
+          </article>
+
+          <article class="audit-item">
+            <strong>Verified: reading measure</strong>
+            <p>The content remains at 70ch, centered with min() and fluid side spacing.</p>
+          </article>
+        </div>
+      </section>
+
+      <section class="section-card" id="final-result" aria-labelledby="result-title">
+        <div class="section-header">
+          <span class="section-index">06</span>
+          <div>
+            <h2 id="result-title">The final article after the audited CSS is applied</h2>
+            <p class="section-kicker">Resize the browser or zoom the page: the hierarchy changes continuously while the reading measure remains controlled.</p>
+          </div>
+        </div>
+
+        <div class="result-stage">
+          <article class="magazine-article">
+            <header class="article-header">
+              <span class="article-category">Technology &amp; Design</span>
+              <h1 class="article-title">The Architecture of Fluid Layouts</h1>
+              <p class="article-lead">How web design moved away from static pixels to embrace the responsive, organic physics of the screen.</p>
+              <div class="article-meta">Published on <time datetime="2026-07-16">July 16, 2026</time> by Alex Chen</div>
+            </header>
+
+            <div class="article-body">
+              <p><span class="drop-cap">W</span>eb typography has historically been a struggle between the designer's intent and the user's viewport. Early web pages forced layout structures into rigid boxes, treating the web browser like a sheet of paper. But digital interfaces are dynamic, liquid, and unpredictable.</p>
+
+              <h2>The Search for Perfect Contrast</h2>
+              <p>Using older CSS models, calculating contrast meant constantly converting hex codes or managing complex RGB values. Today's modern standards allow us to declare colors natively via perceptual spacing, ensuring that our dark and light themes stay accessible without guesswork.</p>
+
+              <blockquote>
+                “Typography is the craft of framing human thought. On the web, that frame must be liquid.”
+              </blockquote>
+
+              <h2>Stripping Away Font Metadata</h2>
+              <p>Fonts have built-in spacing above and below letters, known as half-leading. This empty space often breaks vertical layout grids. With modern CSS features, we can trim this space completely, aligning text elements directly against structural layout boundaries.</p>
+            </div>
+          </article>
+        </div>
+
+        <div class="result-explanation">
+          <article class="result-note">
+            <h3>One type system</h3>
+            <p><code>--demo-step-*</code> tokens control every text role from metadata through the display title.</p>
+          </article>
+
+          <article class="result-note">
+            <h3>One readable measure</h3>
+            <p><code>70ch</code> protects line length while <code>18ch</code> and <code>52ch</code> shape the title and lead.</p>
+          </article>
+
+          <article class="result-note">
+            <h3>Progressive trimming</h3>
+            <p><code>@supports</code> applies optical trimming without breaking browsers that still use normal font metrics.</p>
+          </article>
+        </div>
+      </section>
+
+      <section class="section-card" aria-labelledby="verification-title">
+        <div class="section-header">
+          <span class="section-index">07</span>
+          <div>
+            <h2 id="verification-title">Technical verification before deployment</h2>
+            <p class="section-kicker">The completed page is only trustworthy after the generated behavior is inspected.</p>
+          </div>
+        </div>
+
+        <ul class="verification-list">
+          <li>Inspect computed font sizes at narrow, medium, and wide viewport widths.</li>
+          <li>Confirm the body measure stays within the required 65–75 character range.</li>
+          <li>Test browser zoom at 200% and verify that text remains readable without clipping.</li>
+          <li>Check keyboard focus on navigation, theme, and copy controls.</li>
+          <li>Disable text-box support and confirm the fallback rhythm remains usable.</li>
+          <li>Use the Accessibility panel or Lighthouse to review contrast and document structure.</li>
+        </ul>
+      </section>
+    </main>
+
+    <footer class="site-footer">
+      <p>AI drafted the system. Human direction, auditing, and verification made it production-ready.</p>
+      <p><a href="index.html">Return to Dmitriy Chernichenko’s resume</a></p>
+    </footer>
+
+    <noscript>
+      <p class="noscript-note">The showcase remains readable without JavaScript. Theme persistence and copy buttons require JavaScript.</p>
+    </noscript>
+  </div>
+
+  <script>
+    document.querySelectorAll("[data-copy-target]").forEach((button) => {
+        button.addEventListener("click", async () => {
+          const target = document.getElementById(button.dataset.copyTarget);
+          if (!target) return;
+
+          const originalLabel = button.textContent;
+
+          try {
+            await navigator.clipboard.writeText(target.textContent);
+            button.textContent = "Copied";
+          } catch {
+            button.textContent = "Select & Copy";
+            const selection = window.getSelection();
+            const range = document.createRange();
+            range.selectNodeContents(target);
+            selection.removeAllRanges();
+            selection.addRange(range);
+          }
+
+          window.setTimeout(() => {
+            button.textContent = originalLabel;
+          }, 1800);
+        });
+    });
+  </script>
+</body>
+</html>
