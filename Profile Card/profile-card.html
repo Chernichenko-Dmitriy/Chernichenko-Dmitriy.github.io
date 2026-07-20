@@ -5,6 +5,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <!-- ADDED: follows the Resume page's shared resume-theme value. -->
+  <script src="../theme.js"></script>
 
   <!-- OLD: <title>Production-Grade Profile Card</title> -->
   <!-- CHANGED: The document title now describes the resume preview rather than a generic demo component. -->
@@ -604,6 +606,7 @@
   <!-- OLD: <button class="theme-toggle" id="themeToggle" aria-label="Switch to dark theme">Toggle Dark Mode</button> -->
   <!-- CHANGED: Dark is now the resume-matching default. aria-pressed exposes the
        current state, and the visible label describes the available theme. -->
+  <!-- OLD LOCAL THEME BUTTON — intentionally disabled:
   <button
     type="button"
     class="theme-toggle"
@@ -613,6 +616,8 @@
   >
     Light Theme
   </button>
+  -->
+  <!-- CHANGED: Profile Card follows the Resume page's resume-theme value. -->
 
   <article class="profile-card" aria-labelledby="profile-card-title">
     <figure class="profile-card__media">
@@ -672,24 +677,13 @@
       <a href="../index.html" class="profile-card__action">Read Resume</a>
     </div>
   </article>
-
+  <!-- OLD LOCAL PROFILE THEME SCRIPT — intentionally disabled.
+       It used the separate profile-card-theme key and therefore could not
+       follow the Resume page. The original code is preserved below:
   <script>
     const toggle = document.getElementById("themeToggle");
     const doc = document.documentElement;
 
-    /* OLD:
-    toggle.addEventListener('click', () => {
-      const currentTheme = doc.getAttribute('data-theme');
-      const newTheme = currentTheme === 'light' ? 'dark' : 'light';
-
-      doc.setAttribute('data-theme', newTheme);
-      toggle.setAttribute('aria-label', `Switch to ${currentTheme} theme`);
-    });
-    */
-
-    /* CHANGED: One function synchronizes the document theme, visible label,
-       accessible name, and pressed state. The selected theme is persisted when
-       storage is available, while failure leaves the card fully functional. */
     function applyTheme(theme) {
       const isLight = theme === "light";
       doc.setAttribute("data-theme", theme);
@@ -703,20 +697,16 @@
       if (savedTheme === "light" || savedTheme === "dark") {
         applyTheme(savedTheme);
       }
-    } catch (error) {
-      /* ADDED: Storage can be blocked in privacy modes; the dark default remains valid. */
-    }
+    } catch (error) {}
 
     toggle.addEventListener("click", () => {
       const nextTheme = doc.getAttribute("data-theme") === "dark" ? "light" : "dark";
       applyTheme(nextTheme);
-
       try {
         window.localStorage.setItem("profile-card-theme", nextTheme);
-      } catch (error) {
-        /* ADDED: Theme switching does not depend on storage permission. */
-      }
+      } catch (error) {}
     });
   </script>
+  -->
 </body>
 </html>

@@ -1493,3 +1493,810 @@ body {
     overflow-wrap: anywhere;
   }
 }
+
+
+/* ==========================================================================
+   FLUID TYPOGRAPHY PAGE
+   The original Fluid Typography embedded CSS was moved here only. Every rule
+   is scoped to body.fluid-typography-page so these additions cannot alter the
+   Resume page. Profile Card CSS remains embedded in profile-card.html.
+   ========================================================================== */
+    body.fluid-typography-page {      --color-canvas: oklch(0.15 0.02 255);
+      --color-surface: oklch(0.20 0.02 255);
+      --color-surface-elevated: oklch(0.24 0.025 255);
+      --color-border: oklch(0.33 0.025 255);
+      --color-text-primary: oklch(0.95 0.01 255);
+      --color-text-secondary: oklch(0.82 0.015 255);
+      --color-text-muted: oklch(0.72 0.02 255);
+      --color-accent: oklch(0.72 0.16 55);
+      --color-accent-hover: oklch(0.77 0.15 55);
+      --color-accent-secondary: oklch(0.78 0.12 205);
+      --color-on-accent: oklch(0.16 0.02 255);
+      --color-accent-soft: oklch(0.72 0.16 55 / 0.10);
+      --color-accent-soft-strong: oklch(0.72 0.16 55 / 0.18);
+      --color-accent-glow: oklch(0.72 0.16 55 / 0.35);
+      --color-cyan-glow: oklch(0.78 0.12 205 / 0.18);
+      --color-overlay: oklch(0 0 0 / 0.32);
+      --color-code: oklch(0.13 0.02 255);
+      --color-success: oklch(0.78 0.12 145);
+      --color-shadow: oklch(0 0 0 / 0.42);
+
+      --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      --font-serif: Georgia, "Times New Roman", serif;
+      --font-mono: "Fira Code", "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+
+      --showcase-step--1: clamp(0.82rem, 0.79rem + 0.15vw, 0.92rem);
+      --showcase-step-0: clamp(1rem, 0.96rem + 0.2vw, 1.125rem);
+      --showcase-step-1: clamp(1.15rem, 1.07rem + 0.4vw, 1.4rem);
+      --showcase-step-2: clamp(1.45rem, 1.28rem + 0.85vw, 2rem);
+      --showcase-step-3: clamp(2rem, 1.65rem + 1.75vw, 3.15rem);
+      --showcase-step-4: clamp(2.65rem, 2.02rem + 3.15vw, 4.75rem);
+
+      --demo-step--1: clamp(0.875rem, 0.84rem + 0.18vw, 1rem);
+      --demo-step-0: clamp(1rem, 0.95rem + 0.25vw, 1.175rem);
+      --demo-step-1: clamp(1.25rem, 1.14rem + 0.55vw, 1.625rem);
+      --demo-step-2: clamp(1.75rem, 1.46rem + 1.45vw, 2.75rem);
+      --demo-step-3: clamp(2.5rem, 1.93rem + 2.85vw, 4.5rem);
+
+      --space-2xs: 0.25rem;
+      --space-xs: 0.5rem;
+      --space-sm: 0.75rem;
+      --space-md: clamp(1rem, 0.9rem + 0.5vw, 1.35rem);
+      --space-lg: clamp(1.5rem, 1.28rem + 1.1vw, 2.25rem);
+      --space-xl: clamp(2rem, 1.55rem + 2.25vw, 3.5rem);
+      --space-2xl: clamp(3rem, 2.15rem + 4.25vw, 5.75rem);
+
+      --radius-sm: 0.375rem;
+      --radius-md: 0.6rem;
+      --radius-lg: 0.85rem;
+      --radius-pill: 999px;
+      /* Matches the resume container width. Because both shells use border-box
+         sizing and 1.5rem inline padding, their top-level tiles align exactly. */
+      --layout-max: 75rem;
+      --reading-measure: 70ch;
+      --border-hairline: 1px;
+      --control-height: 2.75rem;
+      --transition-fast: 0.2s ease;
+      --transition-normal: 0.3s ease;
+      --focus-ring: 0 0 0 0.25rem var(--color-accent-secondary);
+      --shadow-card: 0 1rem 2.5rem var(--color-shadow);
+    }
+
+    [data-theme="light"] body.fluid-typography-page {      --color-canvas: oklch(0.97 0.008 255);
+      --color-surface: oklch(0.995 0.002 255);
+      --color-surface-elevated: oklch(0.965 0.01 255);
+      --color-border: oklch(0.86 0.02 255);
+      --color-text-primary: oklch(0.22 0.025 255);
+      --color-text-secondary: oklch(0.36 0.025 255);
+      --color-text-muted: oklch(0.45 0.025 255);
+      --color-accent: oklch(0.52 0.125 55);
+      --color-accent-hover: oklch(0.46 0.11 55);
+      --color-accent-secondary: oklch(0.45 0.07 205);
+      --color-on-accent: oklch(0.995 0.002 255);
+      --color-accent-soft: oklch(0.52 0.125 55 / 0.09);
+      --color-accent-soft-strong: oklch(0.52 0.125 55 / 0.15);
+      --color-accent-glow: oklch(0.52 0.125 55 / 0.20);
+      --color-cyan-glow: oklch(0.45 0.07 205 / 0.12);
+      --color-overlay: oklch(0.22 0.025 255 / 0.10);
+      --color-code: oklch(0.20 0.02 255);
+      --color-success: oklch(0.48 0.12 145);
+      --color-shadow: oklch(0.22 0.025 255 / 0.14);
+    }
+
+    body.fluid-typography-page *,
+body.fluid-typography-page *::before,
+body.fluid-typography-page *::after {      box-sizing: border-box;
+    }
+
+    body.fluid-typography-page {      color-scheme: dark;
+      scroll-behavior: smooth;
+    }
+
+    [data-theme="light"] body.fluid-typography-page {      color-scheme: light;
+    }
+
+    body.fluid-typography-page {      margin: 0;
+      min-width: 0;
+      background:
+        radial-gradient(circle at 10% 8%, var(--color-accent-glow), transparent 30rem),
+        radial-gradient(circle at 92% 30%, var(--color-cyan-glow), transparent 28rem),
+        var(--color-canvas);
+      color: var(--color-text-primary);
+      font-family: var(--font-sans);
+      font-size: var(--showcase-step-0);
+      line-height: 1.65;
+      text-rendering: optimizeLegibility;
+      -webkit-font-smoothing: antialiased;
+      transition: background-color var(--transition-normal), color var(--transition-normal);
+    }
+
+    body.fluid-typography-page a {      color: inherit;
+    }
+
+    body.fluid-typography-page :where(a, button):focus-visible {      outline: none;
+      box-shadow: var(--focus-ring);
+    }
+
+    body.fluid-typography-page .skip-link {      position: fixed;
+      top: var(--space-xs);
+      left: var(--space-xs);
+      z-index: 1000;
+      transform: translateY(calc(-100% - 2rem));
+      padding: var(--space-sm) var(--space-md);
+      border-radius: var(--radius-sm);
+      background: var(--color-accent);
+      color: var(--color-on-accent);
+      font-weight: 800;
+      text-decoration: none;
+      transition: transform var(--transition-fast);
+    }
+
+    body.fluid-typography-page .skip-link:focus {      transform: translateY(0);
+    }
+
+    body.fluid-typography-page .site-shell {      width: 100%;
+      max-width: var(--layout-max);
+      margin-inline: auto;
+      /* The resume shell uses a fixed 1.5rem inline inset. Keeping that exact
+         value here makes the showcase hero/section tiles the same width. */
+      padding: var(--space-md) 1.5rem var(--space-2xl);
+    }
+
+    body.fluid-typography-page .site-nav {      position: static;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: var(--space-md);
+      padding: 0;
+      border: 0;
+      border-radius: 0;
+      background: transparent;
+      box-shadow: none;
+      backdrop-filter: none;
+    }
+
+    body.fluid-typography-page .nav-actions {      display: flex;
+      justify-content: flex-end;
+      flex-wrap: wrap;
+      gap: var(--space-xs);
+      margin-inline-start: auto;
+    }
+
+    body.fluid-typography-page .nav-link,
+body.fluid-typography-page .theme-toggle,
+body.fluid-typography-page .copy-button {      min-height: var(--control-height);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: var(--space-sm) var(--space-md);
+      border: var(--border-hairline) solid var(--color-border);
+      border-radius: var(--radius-sm);
+      background: var(--color-surface);
+      color: var(--color-text-primary);
+      font: inherit;
+      font-size: var(--showcase-step--1);
+      font-weight: 800;
+      text-decoration: none;
+      cursor: pointer;
+      transition:
+        transform var(--transition-fast),
+        color var(--transition-fast),
+        border-color var(--transition-fast),
+        background-color var(--transition-fast);
+    }
+
+    body.fluid-typography-page .nav-link:hover,
+body.fluid-typography-page .theme-toggle:hover,
+body.fluid-typography-page .copy-button:hover {      color: var(--color-accent);
+      border-color: var(--color-accent);
+      transform: translateY(-0.0625rem);
+    }
+
+    body.fluid-typography-page .nav-link--primary {      background: var(--color-accent);
+      border-color: var(--color-accent);
+      color: var(--color-on-accent);
+    }
+
+    body.fluid-typography-page .nav-link--primary:hover {      background: var(--color-accent-hover);
+      border-color: var(--color-accent-hover);
+      color: var(--color-on-accent);
+    }
+
+    body.fluid-typography-page .hero {      position: relative;
+      overflow: hidden;
+      margin-top: var(--space-lg);
+      padding: var(--space-2xl) var(--space-xl);
+      border: var(--border-hairline) solid var(--color-border);
+      border-radius: var(--radius-lg);
+      background:
+        linear-gradient(135deg, var(--color-accent-soft-strong), transparent 45%),
+        var(--color-surface);
+      box-shadow: var(--shadow-card);
+    }
+
+    body.fluid-typography-page .hero::before {      content: "";
+      position: absolute;
+      inset-block: 0;
+      inset-inline-start: 0;
+      width: 0.3rem;
+      background: linear-gradient(var(--color-accent), var(--color-accent-secondary));
+    }
+
+    body.fluid-typography-page .eyebrow {      margin: 0 0 var(--space-md);
+      color: var(--color-accent-secondary);
+      font-family: var(--font-mono);
+      font-size: var(--showcase-step--1);
+      font-weight: 800;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    body.fluid-typography-page h1,
+body.fluid-typography-page h2,
+body.fluid-typography-page h3 {      overflow-wrap: anywhere;
+    }
+
+    body.fluid-typography-page h1 {      max-width: 17ch;
+      margin: 0;
+      font-size: var(--showcase-step-4);
+      line-height: 1.02;
+      letter-spacing: -0.045em;
+      text-wrap: balance;
+    }
+
+    body.fluid-typography-page .hero-lead {      max-width: 62ch;
+      margin: var(--space-lg) 0 0;
+      color: var(--color-text-secondary);
+      font-size: var(--showcase-step-1);
+      line-height: 1.55;
+    }
+
+    body.fluid-typography-page .process-strip {      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(min(100%, 10rem), 1fr));
+      row-gap: var(--space-sm);
+      column-gap: calc(var(--space-sm) / 2);
+      margin-top: var(--space-xl);
+    }
+
+    body.fluid-typography-page .process-step {      padding: var(--space-md);
+      border: var(--border-hairline) solid var(--color-border);
+      border-radius: var(--radius-md);
+      background: var(--color-surface-elevated);
+    }
+
+    body.fluid-typography-page .process-number {      display: block;
+      margin-bottom: var(--space-xs);
+      color: var(--color-accent);
+      font-family: var(--font-mono);
+      font-weight: 800;
+    }
+
+    body.fluid-typography-page .process-step strong {      display: block;
+      font-size: var(--showcase-step--1);
+    }
+
+    body.fluid-typography-page main {      display: grid;
+      min-width: 0;
+      width: 100%;
+      /* OLD:
+      gap: var(--space-xl);
+      margin-top: var(--space-xl);
+      */
+      /* CHANGED: halve the horizontal bands visible between stacked section cards. */
+      row-gap: calc(var(--space-xl) / 2);
+      column-gap: var(--space-xl);
+      margin-top: calc(var(--space-xl) / 2);
+    }
+
+    body.fluid-typography-page .section-card {      min-width: 0;
+      max-width: 100%;
+      padding: var(--space-xl);
+      border: var(--border-hairline) solid var(--color-border);
+      border-radius: var(--radius-lg);
+      background: var(--color-surface);
+      box-shadow: 0 0.75rem 2rem var(--color-shadow);
+    }
+
+    body.fluid-typography-page .section-header {      display: grid;
+      grid-template-columns: auto minmax(0, 1fr);
+      gap: var(--space-md);
+      align-items: start;
+      margin-bottom: var(--space-lg);
+    }
+
+    body.fluid-typography-page .section-index {      /* OLD:
+      min-width: 2.75rem;
+      min-height: 2.75rem;
+      */
+      /* CHANGED: equal fixed axes prevent the grid item from stretching into an oval. */
+      inline-size: 2.75rem;
+      block-size: 2.75rem;
+      min-inline-size: 2.75rem;
+      min-block-size: 2.75rem;
+      aspect-ratio: 1;
+      align-self: start;
+      justify-self: start;
+      padding: 0;
+      line-height: 1;
+      display: inline-grid;
+      place-items: center;
+      border: var(--border-hairline) solid var(--color-accent);
+      border-radius: 50%;
+      color: var(--color-accent);
+      font-family: var(--font-mono);
+      font-weight: 800;
+    }
+
+    body.fluid-typography-page .section-card h2 {      margin: 0;
+      color: var(--color-text-primary);
+      font-size: var(--showcase-step-3);
+      line-height: 1.12;
+      letter-spacing: -0.03em;
+      text-wrap: balance;
+    }
+
+    body.fluid-typography-page .section-kicker {      margin: var(--space-xs) 0 0;
+      color: var(--color-text-muted);
+      font-size: var(--showcase-step-1);
+    }
+
+    body.fluid-typography-page .narrative-grid {      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(min(100%, 30rem), 1fr));
+      row-gap: var(--space-lg);
+      column-gap: calc(var(--space-lg) / 2);
+    }
+
+    body.fluid-typography-page .narrative-panel {      padding: var(--space-lg);
+      border: var(--border-hairline) solid var(--color-border);
+      border-radius: var(--radius-md);
+      background: var(--color-surface-elevated);
+    }
+
+    body.fluid-typography-page .narrative-panel h3 {      margin: 0 0 var(--space-sm);
+      color: var(--color-accent);
+      font-size: var(--showcase-step-2);
+    }
+
+    body.fluid-typography-page .narrative-panel p {      margin: 0;
+      color: var(--color-text-secondary);
+    }
+
+    body.fluid-typography-page .concept-grid {      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(min(100%, 12rem), 1fr));
+      row-gap: var(--space-md);
+      column-gap: calc(var(--space-md) / 2);
+    }
+
+    body.fluid-typography-page .concept-card {      min-width: 0;
+      padding: var(--space-lg);
+      border: var(--border-hairline) solid var(--color-border);
+      border-radius: var(--radius-md);
+      background: var(--color-surface-elevated);
+      transition: transform var(--transition-normal), border-color var(--transition-normal);
+    }
+
+    body.fluid-typography-page .concept-card:hover {      transform: translateY(-0.15rem);
+      border-color: var(--color-accent);
+    }
+
+    body.fluid-typography-page .concept-token {      display: inline-block;
+      margin-bottom: var(--space-sm);
+      color: var(--color-accent-secondary);
+      font-family: var(--font-mono);
+      font-size: var(--showcase-step--1);
+      font-weight: 800;
+    }
+
+    body.fluid-typography-page .concept-card h3 {      margin: 0 0 var(--space-sm);
+      font-size: var(--showcase-step-1);
+      line-height: 1.25;
+    }
+
+    body.fluid-typography-page .concept-card p {      margin: 0;
+      color: var(--color-text-muted);
+      font-size: var(--showcase-step--1);
+    }
+
+    body.fluid-typography-page .code-panel {      overflow: hidden;
+      border: var(--border-hairline) solid var(--color-border);
+      border-radius: var(--radius-md);
+      background: var(--color-code);
+    }
+
+    body.fluid-typography-page .code-toolbar {      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: var(--space-md);
+      padding: var(--space-sm) var(--space-md);
+      border-bottom: var(--border-hairline) solid var(--color-border);
+      background: color-mix(in oklch, var(--color-surface-elevated) 82%, black 18%);
+    }
+
+    [data-theme="light"] body.fluid-typography-page .code-toolbar {      background: var(--color-surface-elevated);
+    }
+
+    body.fluid-typography-page .code-label {      color: var(--color-accent-secondary);
+      font-family: var(--font-mono);
+      font-size: var(--showcase-step--1);
+      font-weight: 800;
+    }
+
+    body.fluid-typography-page pre {      margin: 0;
+      padding: var(--space-lg);
+      overflow: auto;
+      color: oklch(0.90 0.01 255);
+      font-family: var(--font-mono);
+      font-size: clamp(0.78rem, 0.74rem + 0.2vw, 0.9rem);
+      line-height: 1.65;
+      tab-size: 2;
+      white-space: pre;
+    }
+
+    body.fluid-typography-page .before-preview {      padding: var(--space-lg);
+      border: var(--border-hairline) dashed var(--color-border);
+      border-radius: var(--radius-md);
+      background: white;
+      color: #111;
+      font-family: serif;
+    }
+
+    body.fluid-typography-page .before-preview article {      max-width: none;
+    }
+
+    body.fluid-typography-page .before-preview h1,
+body.fluid-typography-page .before-preview h2 {      letter-spacing: normal;
+      text-wrap: wrap;
+    }
+
+    body.fluid-typography-page .before-preview h1 {      max-width: none;
+      color: #111;
+      font-size: 2em;
+      line-height: normal;
+    }
+
+    body.fluid-typography-page .before-preview h2 {      color: #111;
+      font-size: 1.5em;
+    }
+
+    body.fluid-typography-page .before-preview p,
+body.fluid-typography-page .before-preview blockquote {      color: #111;
+    }
+
+    body.fluid-typography-page .before-layout,
+body.fluid-typography-page .prompt-build {      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(min(100%, 30rem), 1fr));
+      row-gap: var(--space-lg);
+      column-gap: calc(var(--space-lg) / 2);
+      align-items: start;
+    }
+
+    body.fluid-typography-page .prompt-layers {      display: grid;
+      gap: var(--space-sm);
+    }
+
+    body.fluid-typography-page .prompt-layer {      padding: var(--space-md);
+      border-inline-start: 0.25rem solid var(--color-accent);
+      border-radius: 0 var(--radius-md) var(--radius-md) 0;
+      background: var(--color-surface-elevated);
+    }
+
+    body.fluid-typography-page .prompt-layer strong {      display: block;
+      margin-bottom: var(--space-2xs);
+      color: var(--color-text-primary);
+    }
+
+    body.fluid-typography-page .prompt-layer p {      margin: 0;
+      color: var(--color-text-muted);
+      font-size: var(--showcase-step--1);
+    }
+
+    body.fluid-typography-page .audit-grid {      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(min(100%, 30rem), 1fr));
+      row-gap: var(--space-md);
+      column-gap: calc(var(--space-md) / 2);
+      margin-top: var(--space-lg);
+    }
+
+    body.fluid-typography-page .audit-item {      padding: var(--space-md);
+      border: var(--border-hairline) solid var(--color-border);
+      border-radius: var(--radius-md);
+      background: var(--color-surface-elevated);
+    }
+
+    body.fluid-typography-page .audit-item strong {      color: var(--color-success);
+    }
+
+    body.fluid-typography-page .audit-item p {      margin: var(--space-xs) 0 0;
+      color: var(--color-text-muted);
+    }
+
+    body.fluid-typography-page .result-stage {      padding: clamp(1rem, 0.6rem + 2vw, 2.5rem);
+      border: var(--border-hairline) solid var(--color-border);
+      border-radius: var(--radius-lg);
+      background: oklch(0.975 0.01 80);
+      color: oklch(0.22 0.025 55);
+      container-type: inline-size;
+    }
+
+    body.fluid-typography-page .result-stage .magazine-article {      width: min(calc(100% - 2rem), 70ch);
+      margin-inline: auto;
+      padding-block: clamp(2rem, 1.71rem + 1.45vw, 3rem);
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: var(--demo-step-0);
+      line-height: 1.7;
+    }
+
+    body.fluid-typography-page .result-stage .article-header {      margin-bottom: clamp(3rem, 2.43rem + 2.85vw, 5rem);
+    }
+
+    body.fluid-typography-page .result-stage .article-category {      display: inline-block;
+      margin-bottom: clamp(1.25rem, 1.11rem + 0.7vw, 1.75rem);
+      color: oklch(0.53 0.14 45);
+      font-family: var(--font-sans);
+      font-size: var(--demo-step--1);
+      font-weight: 800;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    body.fluid-typography-page .result-stage .article-title {      max-width: 18ch;
+      margin: 0;
+      color: oklch(0.22 0.025 55);
+      font-family: var(--font-sans);
+      font-size: var(--demo-step-3);
+      font-weight: 800;
+      line-height: 1.05;
+      letter-spacing: -0.045em;
+      text-wrap: balance;
+    }
+
+    body.fluid-typography-page .result-stage .article-lead {      max-width: 52ch;
+      margin-block: clamp(1.25rem, 1.11rem + 0.7vw, 1.75rem);
+      color: oklch(0.42 0.025 55);
+      font-family: var(--font-sans);
+      font-size: var(--demo-step-1);
+      line-height: 1.45;
+    }
+
+    body.fluid-typography-page .result-stage .article-meta {      padding-top: 1rem;
+      border-top: 1px solid oklch(0.84 0.025 75);
+      color: oklch(0.48 0.025 55);
+      font-family: var(--font-sans);
+      font-size: var(--demo-step--1);
+    }
+
+    body.fluid-typography-page .result-stage .article-body {      max-width: 70ch;
+    }
+
+    body.fluid-typography-page .result-stage .article-body p {      margin-block: 0 clamp(1.25rem, 1.11rem + 0.7vw, 1.75rem);
+    }
+
+    body.fluid-typography-page .result-stage .article-body h2 {      margin-block: clamp(3rem, 2.43rem + 2.85vw, 5rem) 1rem;
+      color: oklch(0.22 0.025 55);
+      font-family: var(--font-sans);
+      font-size: var(--demo-step-2);
+      line-height: 1.15;
+      letter-spacing: -0.025em;
+      text-wrap: balance;
+    }
+
+    body.fluid-typography-page .result-stage blockquote {      margin: clamp(2rem, 1.71rem + 1.45vw, 3rem) 0;
+      padding-inline-start: 1.25rem;
+      border-inline-start: 0.25rem solid oklch(0.53 0.14 45);
+      color: oklch(0.38 0.1 45);
+      font-family: var(--font-sans);
+      font-size: var(--demo-step-1);
+      font-weight: 700;
+      line-height: 1.45;
+    }
+
+    body.fluid-typography-page .result-stage .drop-cap {      float: left;
+      margin-inline-end: 0.12em;
+      color: oklch(0.53 0.14 45);
+      font-family: var(--font-sans);
+      font-size: var(--demo-step-3);
+      font-weight: 800;
+      line-height: 0.78;
+    }
+
+    @supports (text-box: trim-both cap alphabetic) {
+
+      body.fluid-typography-page .result-stage .article-category,
+body.fluid-typography-page .result-stage .article-title,
+body.fluid-typography-page .result-stage .drop-cap,
+body.fluid-typography-page .eyebrow,
+body.fluid-typography-page .nav-link,
+body.fluid-typography-page .theme-toggle,
+body.fluid-typography-page .copy-button {        text-box: trim-both cap alphabetic;
+      }
+    
+}
+
+    body.fluid-typography-page .result-explanation {      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(min(100%, 14rem), 1fr));
+      row-gap: var(--space-md);
+      column-gap: calc(var(--space-md) / 2);
+      margin-top: var(--space-lg);
+    }
+
+    body.fluid-typography-page .result-note {      padding: var(--space-md);
+      border: var(--border-hairline) solid var(--color-border);
+      border-radius: var(--radius-md);
+      background: var(--color-surface-elevated);
+    }
+
+    body.fluid-typography-page .result-note code {      color: var(--color-accent-secondary);
+      font-family: var(--font-mono);
+    }
+
+    body.fluid-typography-page .result-note h3 {      margin: 0 0 var(--space-xs);
+      font-size: var(--showcase-step-1);
+    }
+
+    body.fluid-typography-page .result-note p {      margin: 0;
+      color: var(--color-text-muted);
+      font-size: var(--showcase-step--1);
+    }
+
+    body.fluid-typography-page .verification-list {      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(min(100%, 30rem), 1fr));
+      row-gap: var(--space-sm);
+      column-gap: calc(var(--space-sm) / 2);
+      padding: 0;
+      margin: 0;
+      list-style: none;
+    }
+
+    body.fluid-typography-page .verification-list li {      position: relative;
+      padding: var(--space-md) var(--space-md) var(--space-md) 3rem;
+      border: var(--border-hairline) solid var(--color-border);
+      border-radius: var(--radius-md);
+      background: var(--color-surface-elevated);
+    }
+
+    body.fluid-typography-page .verification-list li::before {      content: "✓";
+      position: absolute;
+      left: var(--space-md);
+      color: var(--color-success);
+      font-family: var(--font-mono);
+      font-weight: 900;
+    }
+
+    body.fluid-typography-page .site-footer {      margin-top: var(--space-xl);
+      padding: var(--space-xl);
+      border-top: var(--border-hairline) solid var(--color-border);
+      color: var(--color-text-muted);
+      text-align: center;
+      font-family: var(--font-mono);
+      font-size: var(--showcase-step--1);
+    }
+
+    body.fluid-typography-page .noscript-note {      margin-top: var(--space-md);
+      padding: var(--space-md);
+      border: var(--border-hairline) solid var(--color-border);
+      border-radius: var(--radius-md);
+      color: var(--color-text-secondary);
+      background: var(--color-surface);
+    }
+
+    /* Grid tracks now choose their own column count with auto-fit/minmax(),
+       so no tablet-only column override is needed. */
+
+    @media (max-width: 42rem) {
+
+      body.fluid-typography-page .site-nav {        align-items: stretch;
+        flex-direction: column;
+      }
+
+      body.fluid-typography-page .nav-actions {        display: grid;
+        grid-template-columns: 1fr;
+        width: 100%;
+        margin-inline-start: 0;
+      }
+
+      body.fluid-typography-page .site-nav > .nav-link,
+body.fluid-typography-page .nav-actions > .nav-link,
+body.fluid-typography-page .nav-actions > .theme-toggle {        width: 100%;
+      }
+
+      body.fluid-typography-page .hero,
+body.fluid-typography-page .section-card {        padding: var(--space-lg);
+      }
+
+      body.fluid-typography-page .process-strip,
+body.fluid-typography-page .concept-grid,
+body.fluid-typography-page .narrative-grid,
+body.fluid-typography-page .audit-grid,
+body.fluid-typography-page .result-explanation,
+body.fluid-typography-page .verification-list {        grid-template-columns: 1fr;
+      }
+
+      body.fluid-typography-page .section-header {        grid-template-columns: 1fr;
+      }
+
+      body.fluid-typography-page .section-index {        width: 2.75rem;
+      }
+    
+}
+
+    /* Match the resume's mobile shell inset at the same breakpoint. */
+    @media (max-width: 37.499rem) {
+
+      body.fluid-typography-page .site-shell {        padding-inline: var(--space-md);
+      }
+    
+}
+
+    /* Match the resume's min-width: 0 strategy. Grid/flex children otherwise
+       use an automatic min-content width and can force an entire section wider
+       than the viewport when they contain code, long labels, or nested grids. */
+    body.fluid-typography-page .section-card > *,
+body.fluid-typography-page .section-header > *,
+body.fluid-typography-page .process-step,
+body.fluid-typography-page .narrative-panel,
+body.fluid-typography-page .concept-card,
+body.fluid-typography-page .code-panel,
+body.fluid-typography-page .before-preview,
+body.fluid-typography-page .prompt-layers,
+body.fluid-typography-page .prompt-layer,
+body.fluid-typography-page .audit-item,
+body.fluid-typography-page .result-stage,
+body.fluid-typography-page .result-note,
+body.fluid-typography-page .verification-list li {      min-width: 0;
+      max-width: 100%;
+    }
+
+    body.fluid-typography-page .code-label,
+body.fluid-typography-page :not(pre) > code {      overflow-wrap: anywhere;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+
+      body.fluid-typography-page {        scroll-behavior: auto;
+      }
+
+      body.fluid-typography-page *,
+body.fluid-typography-page *::before,
+body.fluid-typography-page *::after {        transition-duration: 0.01ms !important;
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+      }
+    
+}
+
+    @media print {
+
+      body.fluid-typography-page,
+[data-theme="light"] body.fluid-typography-page {        --color-canvas: white;
+        --color-surface: white;
+        --color-surface-elevated: #f7f7f7;
+        --color-border: #aaa;
+        --color-text-primary: #111;
+        --color-text-secondary: #222;
+        --color-text-muted: #444;
+        --color-accent: #8a3b00;
+        --color-accent-secondary: #006b75;
+        --color-shadow: transparent;
+      }
+
+      body.fluid-typography-page {        background: white;
+      }
+
+      body.fluid-typography-page .site-nav,
+body.fluid-typography-page .copy-button {        display: none;
+      }
+
+      body.fluid-typography-page .site-shell {        width: 100%;
+        padding: 0;
+      }
+
+      body.fluid-typography-page .hero,
+body.fluid-typography-page .section-card {        box-shadow: none;
+        break-inside: avoid;
+      }
+
+      body.fluid-typography-page pre {        white-space: pre-wrap;
+      }
+    
+}
